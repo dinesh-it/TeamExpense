@@ -1,25 +1,39 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:yourapp="http://schemas.android.com/apk/res-auto" >
-
+    
     <item
-        android:id="@+id/action_cur_month"
+        android:id="@+id/action_help"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_action_help"
+        android:showAsAction="always"
+        android:title="Help"/>
+    
+    <item
+        android:id="@+id/action_about"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_action_about"
+        android:showAsAction="ifRoom"
+        android:title="About"/>
+    
+    <item
+        android:id="@+id/action_splitup"
+        android:icon="@drawable/ic_action_split"
+        android:orderInCategory="100"
+        android:showAsAction="always"
+        android:title="Calc Share"/>
+    
+    <item
+        android:id="@+id/action_settings"
+        android:icon="@drawable/ic_action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:title="Settings"/>
+    
+    <item
+        android:id="@+id/action_sync_dropbox"
+        android:icon="@drawable/ic_action_refresh"
         android:orderInCategory="100"
         android:showAsAction="never"
-        android:title="Show Current Month"/>
-    <item
-        android:id="@+id/action_show_all"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="Show All"/>
-    <item
-        android:id="@+id/action_show_filtered"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="Show Filtered"/>
-    <item
-        android:id="@+id/action_show_sel_month"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="Show Selected Month"/>
-
+        android:title="Sync with Dropbox"/>
+    
 </menu>

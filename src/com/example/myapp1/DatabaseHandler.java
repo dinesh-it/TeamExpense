@@ -1,6 +1,7 @@
 package com.example.myapp1;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import android.content.ContentValues;
@@ -19,6 +20,8 @@ public class DatabaseHandler extends SQLiteOpenHelper{
  
     // Expense table name
     private static final String TABLE_EXPENSES = "Expenses";
+    
+    public boolean isModified = false;
  
     // Expense Table Columns names
     private static final String KEY_ID = "id";
@@ -55,7 +58,28 @@ public class DatabaseHandler extends SQLiteOpenHelper{
     	values.put(KEY_AMT, exp.getAmt());
     	db.insert(TABLE_EXPENSES, null, values);
         db.close();
+        isModified = true;
     };
+    
+    public boolean updateExpense(Expense exp){
+    	try{
+    		SQLiteDatabase db = this.getWritableDatabase();
+        	ContentValues values = new ContentValues();
+        	values.put(KEY_NAME, exp.getName());
+        	values.put(KEY_DATE, exp.getDate());
+        	values.put(KEY_SPENT_FOR, exp.getSpentFor());
+        	values.put(KEY_COMMENT, exp.getComment());
+        	values.put(KEY_AMT, exp.getAmt());
+        	db.update(TABLE_EXPENSES, values, KEY_ID + " = ?", new String[] { String.valueOf(exp.getId()) });
+            db.close();
+            isModified = true;
+            return true;
+    	}
+    	catch(Exception e){
+    		e.printStackTrace();
+    	}
+    	return false;
+    }
     
     public Expense getExpense(int id) {
         //SQLiteDatabase db = this.getReadableDatabase();
@@ -75,8 +99,10 @@ public class DatabaseHandler extends SQLiteOpenHelper{
     
     public boolean deleteExpense(int id){
     	SQLiteDatabase db = this.getReadableDatabase();
-        if(db.delete(TABLE_EXPENSES, KEY_ID + "=?", new String[] { String.valueOf(id) }) == 1)
+        if(db.delete(TABLE_EXPENSES, KEY_ID + "=?", new String[] { String.valueOf(id) }) == 1){
+        	isModified = true;
         	return true;
+        }
         return false;
     }
     
@@ -98,14 +124,33 @@ public class DatabaseHandler extends SQLiteOpenHelper{
         return expenseList;
     }
     
-    public List<Expense> getMonthExpenses(String date_str) {
+    public List<Expense> getMonthExpenses(String date_str,boolean team_only) {
     	String date[] = date_str.split("/");
+    	if(date_str.equals("")){
+    		final Calendar calendar1 = Calendar.getInstance();
+	        int year = calendar1.get(Calendar.YEAR);
+	        int month = calendar1.get(Calendar.MONTH) + 1;
+	        int day = calendar1.get(Calendar.DAY_OF_MONTH);
+	        date = new String[] { day + "",month + "" ,year + ""};
+    	}
     	long start_date = Expense.toEpoch("01/"+date[1]+"/"+date[2]);
     	long end_date = Expense.toEpoch("01/"+ ( Integer.parseInt(date[1]) + 1 )+"/"+date[2]) - 1;
         List<Expense> expenseList = new ArrayList<Expense>();
         String selectQuery = "SELECT  * FROM " + TABLE_EXPENSES + 
-        		" WHERE " + KEY_DATE + " BETWEEN " + start_date +" AND " + end_date +
-        		" ORDER BY " + KEY_DATE + " DESC";
+        		" WHERE " + KEY_DATE + " BETWEEN " + start_date +" AND " + end_date;
+        if(team_only){
+        	selectQuery += " AND " + KEY_SPENT_FOR + " NOT IN (";
+        	String names[] = getAllNames();
+        	for(int i=0;i< names.length;i++){
+        		if(! (i == 0)){
+        			selectQuery += ", ";
+        		}
+        		selectQuery += "'" + names[i] + "'";
+        	}
+        	selectQuery += ")";
+        }
+        
+        selectQuery += " ORDER BY " + KEY_DATE + " DESC";
      
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -120,17 +165,39 @@ public class DatabaseHandler extends SQLiteOpenHelper{
         return expenseList;
     }
     
-    public List<Expense> getFilteredExpenses(String date_str,String name, String spent_for){
+    public List<Expense> getFilteredExpenses(String date_str,String name, String spent_for,boolean team_only){
     	String date[] = date_str.split("/");
-    	long start_date = Expense.toEpoch("01/"+date[1]+"/"+date[2]);
+    	long start_date;
+    	if(!date_str.equals("")){
+    		start_date = Expense.toEpoch("01/"+date[1]+"/"+date[2]);
+    	}
+    	else{
+    		final Calendar calendar1 = Calendar.getInstance();
+	        int year = calendar1.get(Calendar.YEAR);
+	        int month = calendar1.get(Calendar.MONTH) + 1;
+	        int day = calendar1.get(Calendar.DAY_OF_MONTH);
+	        date = new String[] { day + "",month + "" ,year + ""};
+	        start_date = 0;
+    	}
     	long end_date = Expense.toEpoch("01/"+ ( Integer.parseInt(date[1]) + 1 )+"/"+date[2]) - 1;
         List<Expense> expenseList = new ArrayList<Expense>();
         String selectQuery = "SELECT  * FROM " + TABLE_EXPENSES + 
         		" WHERE " + KEY_DATE + " BETWEEN " + start_date +" AND " + end_date;
-        if(name != null && name != "")
-        	selectQuery += " AND " + KEY_NAME + " = '" + name + "'";
-        if(spent_for != null && spent_for != "")
-        	selectQuery += " AND " + KEY_SPENT_FOR + " = '" + spent_for + "'";
+        if(name != null && ! name.equals(""))
+        	selectQuery += " AND " + KEY_NAME + " LIKE '%" + name + "%'";
+        if(spent_for != null && ! spent_for.equals(""))
+        	selectQuery += " AND " + KEY_SPENT_FOR + " LIKE '%" + spent_for + "%'";
+        if(team_only){
+        	selectQuery += " AND " + KEY_SPENT_FOR + " NOT IN (";
+        	String names[] = getAllNames();
+        	for(int i=0;i< names.length;i++){
+        		if(! (i == 0)){
+        			selectQuery += ", ";
+        		}
+        		selectQuery += "'" + names[i] + "'";
+        	}
+        	selectQuery += ")";
+        }
         
         selectQuery +=	" ORDER BY " + KEY_DATE + " DESC";
      

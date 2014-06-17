@@ -1,0 +1,117 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" >
+    
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" 
+        android:background="#CCCCCC">
+
+    <TextView
+        android:id="@+id/title1"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:text="Add Expense Form"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/helpText1"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:text="This form is used to add an expense to the list. \n
+         Date Field: Once a date is choosen, status will automatically gets updated to selected month.\n 
+         Name: Name of the person who paid for this expense. \n 
+         Spent for: If you give same Name here, it will be taken as self expense. If you give others Name it will be considered as loan. Any other values will be considered as item name.\n 
+         Comments: Any comments regarding this Expense.\n
+         Amount: Will take amount in rupees for this expense. \n 
+         Date, Name, Spent For fields will be considered for filtering in View List also." />
+
+    <TextView
+        android:id="@+id/title2"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:text="Status View"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+    <TextView
+        android:id="@+id/helpText2"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:text="Will show status of the month of date choosen in the Add Form date field.\n
+        Touching on a row will get you to the View List of respective expenses." />
+
+    <TextView
+        android:id="@+id/title3"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:text="List View"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TableRow
+        android:id="@+id/tableRow5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/ic_action_event" />
+    
+    <TextView
+        android:id="@+id/helpText3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Will show the Expense list of current month." />
+    
+    </TableRow>
+    
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/ic_action_search" />
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Will give you the search box." />
+    
+    </TableRow>
+    
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/ic_action_group" />
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Will show only team expenses from the filtered list." />
+    
+    </TableRow>
+    
+    <TextView
+        android:id="@+id/helpText2"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:text="Export: Will export all SHOWN (Current filtered) records to a csv file.\n
+        Import: You can pass the same csv file that you exported to import.\n
+        Format should be Date,Name,Spent For,Amount,Comments each field should be in double quotes.\n
+        Once respective file is choosen it will load all the data from CSV to the list. You have to confirm and select IMPORT AGAIN.\n
+        Show Selected Month: Will take date from the Add form and show respective month expenses only.\n\n
+        Touching a row in the list will show you full details and has a Delete option.\n
+        Show All: Will give full list from the begening of the app to now.\n" />
+
+    </LinearLayout>
+	
+</ScrollView>

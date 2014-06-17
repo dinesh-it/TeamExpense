@@ -1,9 +1,9 @@
 package com.example.myapp1;
 
-import android.annotation.SuppressLint;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class Expense {
 int id;
@@ -27,6 +27,7 @@ public Expense(int tid,String tname,long tdate,String tspent_for,String tcomment
 }
 
 public Expense(String tname,long tdate,String tspent_for,String tcomment,Float tamt){
+	this.id = 0;
 	this.date = tdate;
 	this.name= tname;
 	this.spent_for = tspent_for;
@@ -60,12 +61,11 @@ public Float getAmt(){
 
 public static long toEpoch(String str_date){
 	long epoch_date;
-	SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+	SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy",new Locale("english","India"));
 	Date gmt = new Date();
 	try {
 		gmt = formatter.parse(str_date);
 	} catch (ParseException e) {
-		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
 	epoch_date = gmt.getTime();
@@ -73,7 +73,7 @@ public static long toEpoch(String str_date){
 }
 
 public static String toDateString(long date){
-	SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+	SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy",new Locale("english","India"));
 	Date gmt = new Date(date);
 	String asString = formatter.format(gmt);
 	return asString;

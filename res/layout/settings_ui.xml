@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory 
+        android:title="General"
+        android:key="pref_key_general">
+        
+    <EditTextPreference
+                android:title="Name"
+                android:summary="Set Your Name"
+                android:inputType="textCapSentences"
+                android:key="pref_name"/>
+        
+    <CheckBoxPreference
+        android:key="pref_self_only"
+        android:title="Personal Expense Only"
+        android:summary="Check this if you are using this app only for Personal Expenses."
+        android:defaultValue="false" />
+    
+    </PreferenceCategory>
+    
+    <PreferenceCategory 
+        android:title="Dropbox Sync"
+        android:key="pref_key_dropbox">
+        
+    <CheckBoxPreference
+        android:key="pref_auto_sync"
+        android:title="Auto Sync on Close"
+        android:summary="Whether to sync your data if any changes made when application exits."
+        android:defaultValue="true" />
+    
+    </PreferenceCategory>
+    
+    
+    
+</PreferenceScreen>
