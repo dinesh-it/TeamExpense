@@ -13,6 +13,8 @@ import com.dropbox.sync.android.DbxFile;
 import com.dropbox.sync.android.DbxFileSystem;
 import com.dropbox.sync.android.DbxPath;
 
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.R.drawable;
@@ -206,7 +208,7 @@ public class MainActivity extends Activity {
     	me_btn.setOnClickListener(new OnClickListener(){
     		public void onClick(View view){
     			if(user_name.equals("")){
-    				alert("No Name","Please give your name in Settings first.");
+    				alert("No Name","Goto Settings and set your name.");
     				return;
     			}
     			if(!name.getText().toString().equals(user_name)){
@@ -226,7 +228,7 @@ public class MainActivity extends Activity {
     	self_btn.setOnClickListener(new OnClickListener(){
     		public void onClick(View view){
     			if(user_name.equals("")){
-    				alert("No Name","Please give your name in Settings first.");
+    				alert("No Name","Goto Settings and set your name.");
     				return;
     			}
     			else if( ! name.getText().toString().equals("") && ! name.getText().toString().equals(user_name)){
@@ -262,6 +264,8 @@ public class MainActivity extends Activity {
 		spent_for.setText("");
 		desc.setText("");
 		amt.setText("");
+		me_btn.setText("Me");
+		self_btn.setText("Self");
 		showStatus();
 		setAutoCompletes();
     }
@@ -275,7 +279,7 @@ public class MainActivity extends Activity {
     				syncExpenseToDropbox();
     			}
             } else {
-                notify("Authentication faild!");
+                notify("Authentication failed!");
             }
         }
         else if (requestCode == SETTINGS_SCREEN) {
@@ -286,11 +290,11 @@ public class MainActivity extends Activity {
     }
     
     private void syncExpenseToDropbox() {
-    	if(!db.isModified){
+    	if(!DatabaseHandler.isModified){
     		notify("Sync upto date.\n Nothing to sync.");
     		return;
     	}
-    	notify("Preparing for Sync...\nPlease Wait.");
+    	notify("Team Expense: Preparing for Sync!");
     	try {
     		DbxPath csv_path = new DbxPath("team_expense.csv");
     		DbxFileSystem dbxFs = DbxFileSystem.forAccount(mDbxAcctMgr.getLinkedAccount());
@@ -320,12 +324,23 @@ public class MainActivity extends Activity {
         	}
         	p.close();
         	csv_file.close();
-        	db.isModified = false;
-        	notify("Will be synced once you are online.");
+        	DatabaseHandler.isModified = false;
+        	if(!isNetworkAvailable()){
+        		notify("Team Expense: Will be synced once you are online.");
+        	}else{
+        		notify("Team Expense: Synced!");
+        	}
     	}
     	catch(Exception e){
-    		notify("Sync Failed. " + e.getMessage() );
+    		notify("Team Expense: Sync Failed! " + e.getMessage() );
     	}
+    }
+    
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager 
+              = (ConnectivityManager) getSystemService(MainActivity.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
     
     public void alert(String title,String message){
@@ -360,7 +375,7 @@ public class MainActivity extends Activity {
     }
     
     public void onBackPressed() {
-    	if(auto_sync && db.isModified && mDbxAcctMgr.hasLinkedAccount() ){
+    	if(auto_sync && DatabaseHandler.isModified && mDbxAcctMgr.hasLinkedAccount() ){
     		syncExpenseToDropbox();
     	}
     	if(name.getText() + "" == "" && spent_for.getText() + "" == "" && amt.getText() + "" == ""){
