@@ -21,7 +21,7 @@ public class DatabaseHandler extends SQLiteOpenHelper{
     // Expense table name
     private static final String TABLE_EXPENSES = "Expenses";
     
-    public boolean isModified = false;
+    public static boolean isModified = false;
  
     // Expense Table Columns names
     private static final String KEY_ID = "id";
