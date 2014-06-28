@@ -41,6 +41,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -176,7 +177,7 @@ public class MainActivity extends Activity {
     }
     
     public void setAutoCompletes(){
-    	String[] name_list = db.getAllNames().clone();
+    	String[] name_list = db.getAllNames(null).clone();
         ArrayAdapter<String> names_adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, name_list);
         name.setAdapter(names_adapter);
         String[] items_list = db.getAllItems().clone();
@@ -468,7 +469,7 @@ public class MainActivity extends Activity {
 		        	}
 		        	int N = team_expense.length();
 		        	if(N < 1){
-		        		tx.setText("Sorry! No one is there to share.\n\n");
+		        		tx.setText("Sorry! No one is there in Team to share.\n\n");
 		        		return;
 		        	}
 		        	float given_amt = Integer.parseInt(amt.getText() + "");
@@ -499,6 +500,35 @@ public class MainActivity extends Activity {
 		        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
 		        public void onTextChanged(CharSequence s, int start, int before, int count){}
 		    }); 
+		}
+		else if(id == R.id.action_add_user){
+			final Dialog dialog = new Dialog(MainActivity.this);
+			dialog.setContentView(R.layout.add_user_screen);
+			dialog.setTitle("Add User");
+			dialog.setCancelable(true);
+			dialog.setCanceledOnTouchOutside(true);
+			final Spinner user_type = (Spinner)dialog.findViewById(R.id.user_type);
+			final EditText user_name = (EditText)dialog.findViewById(R.id.new_user_name);
+			Button add_btn = (Button)dialog.findViewById(R.id.add_user_btn);
+			Button cancel_btn = (Button)dialog.findViewById(R.id.add_user_cancel);
+			cancel_btn.setOnClickListener(new OnClickListener(){
+				public void onClick(View v){
+					dialog.cancel();
+				}
+			});
+			add_btn.setOnClickListener(new OnClickListener(){
+				public void onClick(View v){
+					long epoch_date = Expense.toEpoch(date_field.getText().toString());
+					Expense exp = new Expense(user_name.getText().toString(),
+							epoch_date,
+							"User Added",
+							user_type.getSelectedItem().toString(),
+							(float)0);
+					db.addExpense(exp);
+					Toast.makeText(MainActivity.this, "Added Successfuly", Toast.LENGTH_LONG).show();
+				}
+			});
+			dialog.show();
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -574,7 +604,8 @@ public class MainActivity extends Activity {
         	JSONObject itemVice = new JSONObject();
         	JSONObject selfVice = new JSONObject();
         	JSONObject loanVice = new JSONObject();
-        	String names[] = db.getAllNames();
+        	String names[] = db.getAllNames(null);
+        	String non_team_users[] = db.getAllNames("INDIVIDUAL");
         	for ( Expense exp : expenses){
         		  try {
         			  float n_amt = exp.getAmt();
@@ -595,6 +626,8 @@ public class MainActivity extends Activity {
         			  }
         			  //Team Expense
         			  else{
+        				  // Check if this transaction is belongs to team
+        				  if(indexOf(non_team_users,exp.name) == -1){
         				  //Name level
         				  if(nameVice.has(exp.getName()))
         					  n_amt = n_amt + Float.parseFloat(nameVice.getString(exp.getName()));
@@ -602,9 +635,10 @@ public class MainActivity extends Activity {
             			  if(itemVice.has(exp.getSpentFor())){
             				  i_amt = i_amt + Float.parseFloat(itemVice.getString(exp.getSpentFor()));
             			  }
-        				  nameVice.put(exp.getName(), n_amt);
-        				  team_expense.put(exp.name, n_amt);
-        				  itemVice.put(exp.getSpentFor(), i_amt);
+            			  nameVice.put(exp.getName(), n_amt);
+            			  team_expense.put(exp.name, n_amt);
+            			  itemVice.put(exp.getSpentFor(), i_amt);
+            			  }
         			  }
         		  } catch (JSONException e) {
         		    e.printStackTrace();

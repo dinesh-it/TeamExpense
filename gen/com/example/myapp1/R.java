@@ -8,6 +8,9 @@
 package com.example.myapp1;
 
 public final class R {
+    public static final class array {
+        public static final int user_types=0x7f060000;
+    }
     public static final class attr {
     }
     public static final class dimen {
@@ -34,69 +37,75 @@ public final class R {
         public static final int ic_launcher=0x7f02000a;
     }
     public static final class id {
-        public static final int action_about=0x7f080027;
-        public static final int action_cur_month=0x7f08002b;
-        public static final int action_export=0x7f080030;
-        public static final int action_help=0x7f080026;
-        public static final int action_import=0x7f080031;
-        public static final int action_settings=0x7f080029;
-        public static final int action_show_all=0x7f08002c;
-        public static final int action_show_filtered=0x7f08002d;
-        public static final int action_show_sel_month=0x7f08002e;
-        public static final int action_show_team_only=0x7f08002f;
-        public static final int action_splitup=0x7f080028;
-        public static final int action_sync_dropbox=0x7f08002a;
-        public static final int autoCompleteTextView1=0x7f080006;
-        public static final int autoCompleteTextView2=0x7f080008;
-        public static final int button1=0x7f08000d;
-        public static final int button2=0x7f08000e;
-        public static final int close_btn=0x7f080019;
-        public static final int datePicker1=0x7f080017;
-        public static final int del_btn=0x7f080018;
-        public static final int editText1=0x7f080005;
-        public static final int editText4=0x7f08000a;
-        public static final int editText5=0x7f08000b;
-        public static final int expense_view=0x7f080020;
-        public static final int filter_group=0x7f08001b;
-        public static final int helpText1=0x7f080001;
-        public static final int helpText2=0x7f080003;
-        public static final int helpText3=0x7f080023;
-        public static final int imageView1=0x7f080022;
-        public static final int item_status_table=0x7f080016;
-        public static final int list_date=0x7f08001c;
-        public static final int list_name=0x7f08001d;
-        public static final int list_search=0x7f08001f;
-        public static final int list_spent=0x7f08001e;
-        public static final int loan_status_table=0x7f080014;
-        public static final int me_btn=0x7f080007;
-        public static final int save_btn=0x7f08001a;
-        public static final int self_btn=0x7f080009;
-        public static final int self_status_table=0x7f080012;
-        public static final int split_amount=0x7f080024;
-        public static final int splitup_details=0x7f080025;
-        public static final int tableRow5=0x7f08000c;
-        public static final int team_status_table=0x7f080010;
-        public static final int textView1=0x7f080004;
-        public static final int textView2=0x7f08000f;
-        public static final int textView3=0x7f080011;
-        public static final int textView4=0x7f080013;
-        public static final int textView5=0x7f080015;
-        public static final int title1=0x7f080000;
-        public static final int title2=0x7f080002;
-        public static final int title3=0x7f080021;
+        public static final int action_about=0x7f09002b;
+        public static final int action_add_user=0x7f09002f;
+        public static final int action_cur_month=0x7f090030;
+        public static final int action_export=0x7f090035;
+        public static final int action_help=0x7f09002a;
+        public static final int action_import=0x7f090036;
+        public static final int action_settings=0x7f09002d;
+        public static final int action_show_all=0x7f090031;
+        public static final int action_show_filtered=0x7f090032;
+        public static final int action_show_sel_month=0x7f090033;
+        public static final int action_show_team_only=0x7f090034;
+        public static final int action_splitup=0x7f09002c;
+        public static final int action_sync_dropbox=0x7f09002e;
+        public static final int add_user_btn=0x7f09001b;
+        public static final int add_user_cancel=0x7f09001a;
+        public static final int autoCompleteTextView1=0x7f090006;
+        public static final int autoCompleteTextView2=0x7f090008;
+        public static final int button1=0x7f09000d;
+        public static final int button2=0x7f09000e;
+        public static final int close_btn=0x7f09001d;
+        public static final int datePicker1=0x7f090017;
+        public static final int del_btn=0x7f09001c;
+        public static final int editText1=0x7f090005;
+        public static final int editText4=0x7f09000a;
+        public static final int editText5=0x7f09000b;
+        public static final int expense_view=0x7f090024;
+        public static final int filter_group=0x7f09001f;
+        public static final int helpText1=0x7f090001;
+        public static final int helpText2=0x7f090003;
+        public static final int helpText3=0x7f090027;
+        public static final int imageView1=0x7f090026;
+        public static final int item_status_table=0x7f090016;
+        public static final int list_date=0x7f090020;
+        public static final int list_name=0x7f090021;
+        public static final int list_search=0x7f090023;
+        public static final int list_spent=0x7f090022;
+        public static final int loan_status_table=0x7f090014;
+        public static final int me_btn=0x7f090007;
+        public static final int new_user_name=0x7f090018;
+        public static final int save_btn=0x7f09001e;
+        public static final int self_btn=0x7f090009;
+        public static final int self_status_table=0x7f090012;
+        public static final int split_amount=0x7f090028;
+        public static final int splitup_details=0x7f090029;
+        public static final int tableRow5=0x7f09000c;
+        public static final int team_status_table=0x7f090010;
+        public static final int textView1=0x7f090004;
+        public static final int textView2=0x7f09000f;
+        public static final int textView3=0x7f090011;
+        public static final int textView4=0x7f090013;
+        public static final int textView5=0x7f090015;
+        public static final int title1=0x7f090000;
+        public static final int title2=0x7f090002;
+        public static final int title3=0x7f090025;
+        public static final int user_type=0x7f090019;
     }
     public static final class layout {
         public static final int about_screen=0x7f030000;
         public static final int activity_main=0x7f030001;
-        public static final int expense_edit=0x7f030002;
-        public static final int expense_view=0x7f030003;
-        public static final int help_screen=0x7f030004;
-        public static final int settings_ui=0x7f030005;
-        public static final int splitup_screen=0x7f030006;
+        public static final int add_user_screen=0x7f030002;
+        public static final int expense_edit=0x7f030003;
+        public static final int expense_view=0x7f030004;
+        public static final int help_screen=0x7f030005;
+        public static final int settings_ui=0x7f030006;
+        public static final int splitup_screen=0x7f030007;
     }
     public static final class menu {
-        public static final int main=0x7f070000;
-        public static final int view_menus=0x7f070001;
+        public static final int main=0x7f080000;
+        public static final int view_menus=0x7f080001;
     }
     public static final class string {
         public static final int action_settings=0x7f050001;
@@ -126,13 +135,13 @@ public final class R {
     
  API 14 theme customizations can go here. 
          */
-        public static final int AppBaseTheme=0x7f060000;
+        public static final int AppBaseTheme=0x7f070000;
         /**  Application theme. 
  All customizations that are NOT specific to a particular API-level can go here. 
          */
-        public static final int AppTheme=0x7f060001;
-        public static final int Theme_Default=0x7f060002;
-        public static final int Theme_FullScreen=0x7f060004;
-        public static final int Theme_NoTitle=0x7f060003;
+        public static final int AppTheme=0x7f070001;
+        public static final int Theme_Default=0x7f070002;
+        public static final int Theme_FullScreen=0x7f070004;
+        public static final int Theme_NoTitle=0x7f070003;
     }
 }

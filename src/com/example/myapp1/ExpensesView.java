@@ -164,7 +164,7 @@ public class ExpensesView extends Activity {
 	}
 	
 	public void setAutoCompletes(){
-    	String[] name_list = db.getAllNames().clone();
+    	String[] name_list = db.getAllNames(null).clone();
         ArrayAdapter<String> names_adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, name_list);
         name_tx.setAdapter(names_adapter);
         String[] items_list = db.getAllItems().clone();

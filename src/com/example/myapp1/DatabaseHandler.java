@@ -140,7 +140,7 @@ public class DatabaseHandler extends SQLiteOpenHelper{
         		" WHERE " + KEY_DATE + " BETWEEN " + start_date +" AND " + end_date;
         if(team_only){
         	selectQuery += " AND " + KEY_SPENT_FOR + " NOT IN (";
-        	String names[] = getAllNames();
+        	String names[] = getAllNames(null);
         	for(int i=0;i< names.length;i++){
         		if(! (i == 0)){
         			selectQuery += ", ";
@@ -189,7 +189,7 @@ public class DatabaseHandler extends SQLiteOpenHelper{
         	selectQuery += " AND " + KEY_SPENT_FOR + " LIKE '%" + spent_for + "%'";
         if(team_only){
         	selectQuery += " AND " + KEY_SPENT_FOR + " NOT IN (";
-        	String names[] = getAllNames();
+        	String names[] = getAllNames(null);
         	for(int i=0;i< names.length;i++){
         		if(! (i == 0)){
         			selectQuery += ", ";
@@ -214,8 +214,11 @@ public class DatabaseHandler extends SQLiteOpenHelper{
         return expenseList;
     }
     
-    public String[] getAllNames() {
+    public String[] getAllNames(String type) {
         String selectQuery = "SELECT DISTINCT " + KEY_NAME +" FROM " + TABLE_EXPENSES;
+        if(type != null){
+        	selectQuery += " WHERE " + KEY_COMMENT + " LIKE '%" + type + "%'";
+        }
      
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
