@@ -466,19 +466,25 @@ public class ExpensesView extends Activity {
 		Button save_btn, cancel_btn, del_btn;
 		date_field = (EditText)dialog.findViewById(R.id.editText1);
         date_field.setSingleLine(true);
+        date_field.setFocusable(false);
         name = (AutoCompleteTextView)dialog.findViewById(R.id.autoCompleteTextView1);
         name.setSingleLine(true);
+        name.setFocusable(false);
         spent_for = (AutoCompleteTextView)dialog.findViewById(R.id.autoCompleteTextView2);
         spent_for.setSingleLine(true);
+        spent_for.setFocusable(false);
         this.handleNextKey(name, spent_for);
         desc = (EditText)dialog.findViewById(R.id.editText4);
         desc.setSingleLine(true);
+        desc.setFocusable(false);
         this.handleNextKey(spent_for, desc);
         amt = (EditText)dialog.findViewById(R.id.editText5);
         amt.setSingleLine(true);
+        amt.setFocusable(false);
         this.handleNextKey(desc, amt);
         this.handleNextKey(amt, null);
         save_btn = (Button)dialog.findViewById(R.id.save_btn);
+        save_btn.setText("Edit");
         cancel_btn = (Button)dialog.findViewById(R.id.close_btn);
         del_btn = (Button)dialog.findViewById(R.id.del_btn);
 		Expense e = db.getExpense(exp_id);
@@ -491,6 +497,16 @@ public class ExpensesView extends Activity {
 		// Save button action
     	save_btn.setOnClickListener(new OnClickListener(){
     			public void onClick(View view){
+    				Button btn = (Button)view;
+    				if(btn.getText().toString().equals("Edit")){
+    					date_field.setFocusableInTouchMode(true);
+    					name.setFocusableInTouchMode(true);
+    					spent_for.setFocusableInTouchMode(true);
+    					desc.setFocusableInTouchMode(true);
+    					amt.setFocusableInTouchMode(true);
+    					btn.setText("Update");
+    					return;
+    				}
     				if(date_field.getText() + "" == "" || name.getText() + "" == "" || spent_for.getText() + "" == "" || amt.getText() + "" == ""){
     					Toast.makeText(ExpensesView.this, "ERROR: Incomplete form", Toast.LENGTH_LONG).show();
     				}
