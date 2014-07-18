@@ -60,6 +60,7 @@ public class MainActivity extends Activity {
 	 private TableLayout team_status_table, self_status_table, loan_status_table, item_status_table;
 	 private float share_amt;
 	 private JSONObject team_expense;
+	 private JSONObject loanVice = new JSONObject();
 	 
 	 private DbxAccountManager mDbxAcctMgr;
 	 private final String dbxAppKey = "qlqquc9asiaal4g";
@@ -603,7 +604,7 @@ public class MainActivity extends Activity {
         	JSONObject nameVice = new JSONObject();
         	JSONObject itemVice = new JSONObject();
         	JSONObject selfVice = new JSONObject();
-        	JSONObject loanVice = new JSONObject();
+        	loanVice = new JSONObject();
         	String names[] = db.getAllNames(null);
         	String non_team_users[] = db.getAllNames("INDIVIDUAL");
         	for ( Expense exp : expenses){
@@ -639,6 +640,28 @@ public class MainActivity extends Activity {
             			  team_expense.put(exp.name, n_amt);
             			  itemVice.put(exp.getSpentFor(), i_amt);
             			  }
+        			  }
+        			  for(int i=0;i<names.length;i++){
+        				  for(int j=0;j<names.length && i != j;j++){
+        					  String t1 = names[i] + " gave to " + names[j];
+        					  String t2 = names[j] + " gave to " + names[i];
+        					  if( loanVice.has(t1) && loanVice.has(t2) ){
+        						  if(loanVice.getLong(t1) > loanVice.getLong(t2)){
+        							  loanVice.put(t1,loanVice.getLong(t1) - loanVice.getLong(t2));
+        							  loanVice.remove(t2);
+        							  if(loanVice.getLong(t1) == (long)0){
+                						  loanVice.remove(t1);
+                					  }
+        						  }
+        						  else {
+        							  loanVice.put(t2,loanVice.getLong(t2) - loanVice.getLong(t1));
+        							  loanVice.remove(t1);
+        							  if(loanVice.getLong(t2) == (long)0){
+                						  loanVice.remove(t2);
+                					  }
+        						  }
+        					  }
+        				  }
         			  }
         		  } catch (JSONException e) {
         		    e.printStackTrace();
@@ -848,6 +871,7 @@ public class MainActivity extends Activity {
         	
         	// Loan table
         	if(loanVice.length() > 0){
+        		
         		loan_status.setText("Loan Details");
         		Iterator<?> name_iter = loanVice.keys();
             	TableRow tableHead;
