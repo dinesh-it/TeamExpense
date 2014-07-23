@@ -1,5 +1,6 @@
 package com.example.myapp1;
 
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -77,6 +78,16 @@ public static String toDateString(long date){
 	Date gmt = new Date(date);
 	String asString = formatter.format(gmt);
 	return asString;
+}
+
+public static String toCurrencyWithSymbol(float val){
+	NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "in"));
+	return formatter.format(val);
+}
+
+public static String toCurrency(float val){
+	NumberFormat formatter = NumberFormat.getInstance(new Locale("en", "in"));
+	return formatter.format(val);
 }
 
 }

@@ -524,14 +524,14 @@ public class ExpensesView extends Activity {
     				        textView = new TextView(getApplicationContext());
     				        textView.setTextColor(Color.BLUE);
     				        textView.setText(Expense.toDateString(exp.getDate()));
-    				        textView.setPadding(10, 10, 10, 10);
+    				        textView.setPadding(5, 10, 5, 10);
     				        tablerow.addView(textView);
     				        
     				        textView = new TextView(getApplicationContext());
     				        textView.setTextColor(Color.BLACK);
     				        textView.setText(exp.getName());
-    				        textView.setPadding(1, 10, 10, 10);
-    				        textView.setWidth(130);
+    				        textView.setPadding(1, 10, 5, 10);
+    				        textView.setWidth(125);
     				        textView.setMaxLines(4);
     				        textView.setSingleLine(false);
     				        tablerow.addView(textView);
@@ -539,7 +539,7 @@ public class ExpensesView extends Activity {
     				        textView = new TextView(getApplicationContext());
     				        textView.setTextColor(Color.DKGRAY);
     				        textView.setText(exp.getSpentFor());
-    				        textView.setPadding(1, 10, 10, 10);
+    				        textView.setPadding(1, 10, 5, 10);
     				        textView.setWidth(135);
     				        textView.setMaxLines(4);
     				        textView.setSingleLine(false);
@@ -547,10 +547,10 @@ public class ExpensesView extends Activity {
     				        
     				        textView = new TextView(getApplicationContext());
     				        textView.setTextColor(Color.RED);
-    				        textView.setText(exp.getAmt().toString());
-    				        textView.setPadding(5, 10, 10, 10);
+    				        textView.setText(Expense.toCurrencyWithSymbol(exp.getAmt()));
+    				        textView.setPadding(1, 10, 5, 10);
     				        //textView.setPadding(left, top, right, bottom);
-    				        textView.setWidth(100);
+    				        textView.setWidth(135);
     				        textView.setMaxLines(4);
     				        textView.setSingleLine(false);
     				        tablerow.addView(textView);
@@ -644,7 +644,7 @@ public class ExpensesView extends Activity {
         
         textView = new TextView(getApplicationContext());
         textView.setTextColor(Color.BLACK);
-        textView.setText("INR(Rs)");
+        textView.setText("Amount");
         textView.setPadding(1, 10, 10, 10);
         tableHead.addView(textView);
         
@@ -682,7 +682,7 @@ public class ExpensesView extends Activity {
         
         textView = new TextView(getApplicationContext());
         textView.setTextColor(Color.rgb(255, 0, 0));
-        textView.setText(total_amt + "");
+        textView.setText(Expense.toCurrencyWithSymbol(total_amt));
         textView.setPadding(0, 10, 10, 10);
         tableRow_total.addView(textView);
         textView.setBackgroundColor(Color.LTGRAY);
@@ -730,14 +730,14 @@ public class ExpensesView extends Activity {
         textView = new TextView(getApplicationContext());
         textView.setTextColor(Color.BLUE);
         textView.setText(Expense.toDateString(texp.getDate()));
-        textView.setPadding(10, 10, 10, 10);
+        textView.setPadding(5, 10, 5, 10);
         tableRow.addView(textView);
         
         textView = new TextView(getApplicationContext());
         textView.setTextColor(Color.BLACK);
         textView.setText(texp.getName());
-        textView.setPadding(1, 10, 10, 10);
-        textView.setWidth(130);
+        textView.setPadding(1, 10, 5, 10);
+        textView.setWidth(125);
         textView.setMaxLines(4);
         textView.setSingleLine(false);
         tableRow.addView(textView);
@@ -745,7 +745,7 @@ public class ExpensesView extends Activity {
         textView = new TextView(getApplicationContext());
         textView.setTextColor(Color.DKGRAY);
         textView.setText(texp.getSpentFor());
-        textView.setPadding(1, 10, 10, 10);
+        textView.setPadding(1, 10, 5, 10);
         textView.setWidth(135);
         textView.setMaxLines(4);
         textView.setSingleLine(false);
@@ -753,10 +753,10 @@ public class ExpensesView extends Activity {
         
         textView = new TextView(getApplicationContext());
         textView.setTextColor(Color.RED);
-        textView.setText(texp.getAmt().toString());
+        textView.setText(Expense.toCurrencyWithSymbol(texp.getAmt()));
         textView.setPadding(5, 10, 10, 10);
         //textView.setPadding(left, top, right, bottom);
-        textView.setWidth(100);
+        textView.setWidth(135);
         textView.setMaxLines(4);
         textView.setSingleLine(false);
         tableRow.addView(textView);

@@ -694,7 +694,7 @@ public class MainActivity extends Activity {
                 
                 textView = new TextView(getApplicationContext());
                 textView.setTextColor(Color.BLACK);
-                textView.setText("Spent(Rs.)");
+                textView.setText("Spent Amount");
                 textView.setPadding(10, 10, 10, 10);
                 tableHead.addView(textView);
                 
@@ -721,7 +721,7 @@ public class MainActivity extends Activity {
                         
                         col = new TextView(getApplicationContext());
                         col.setTextColor(Color.DKGRAY);
-                        col.setText(value.toString());
+                        col.setText(Expense.toCurrencyWithSymbol(Float.parseFloat(value.toString())));
                         col.setPadding(10, 10, 10, 10);
                         row.addView(col);
                         total_amt += Float.parseFloat(value.toString());
@@ -747,7 +747,7 @@ public class MainActivity extends Activity {
                 
                 col = new TextView(getApplicationContext());
                 col.setTextColor(Color.BLACK);
-                col.setText(total_amt + "");
+                col.setText(Expense.toCurrencyWithSymbol(total_amt));
                 col.setPadding(10, 10, 10, 10);
                 row.addView(col);
                 
@@ -769,7 +769,7 @@ public class MainActivity extends Activity {
                 
                 col = new TextView(getApplicationContext());
                 col.setTextColor(Color.BLACK);
-                col.setText(share_amt + "");
+                col.setText(Expense.toCurrencyWithSymbol(share_amt));
                 col.setPadding(10, 10, 10, 10);
                 row.addView(col);
                 
@@ -811,7 +811,7 @@ public class MainActivity extends Activity {
                 textView = new TextView(getApplicationContext());
                 textView.setTextColor(Color.BLACK);
                 textView.setText("Total");
-                textView.setPadding(10, 10, 10, 10);
+                textView.setPadding(10, 10, 5, 10);
                 tableHead.addView(textView);
                 
                 self_status_table.addView(tableHead);
@@ -828,10 +828,10 @@ public class MainActivity extends Activity {
                 		col = new TextView(getApplicationContext());
                         col.setTextColor(Color.BLUE);
                         col.setText(key);
-                        col.setWidth(150);
+                        col.setWidth(120);
                         col.setMaxLines(4);
                         col.setSingleLine(false);
-                        col.setPadding(10, 10, 10, 10);
+                        col.setPadding(1, 10, 5, 10);
                         row.addView(col);
                         float for_team = 0;
                         if(nameVice.has(key))
@@ -842,22 +842,22 @@ public class MainActivity extends Activity {
                         
                         col = new TextView(getApplicationContext());
                         col.setTextColor(Color.DKGRAY);
-                        col.setText(value.toString());
-                        col.setPadding(10, 10, 10, 10);
+                        col.setText(Expense.toCurrency(Float.parseFloat(value.toString())));
+                        col.setPadding(1, 10, 10, 10);
                         row.addView(col);
                         
                         col = new TextView(getApplicationContext());
                         col.setTextColor(Color.DKGRAY);
-                        col.setText(for_team + "");
-                        col.setPadding(10, 10, 10, 10);
+                        col.setText(Expense.toCurrency(for_team));
+                        col.setPadding(1, 10, 10, 10);
                         row.addView(col);
                         
                         }
                         
                         col = new TextView(getApplicationContext());
                         col.setTextColor(Color.DKGRAY);
-                        col.setText(total + "");
-                        col.setPadding(10, 10, 10, 10);
+                        col.setText(Expense.toCurrencyWithSymbol(total));
+                        col.setPadding(1, 10, 5, 10);
                         row.addView(col);
                         
                         setRowClickListener(row,"self");
@@ -889,7 +889,7 @@ public class MainActivity extends Activity {
                 
                 textView = new TextView(getApplicationContext());
                 textView.setTextColor(Color.BLACK);
-                textView.setText("Given(Rs.)");
+                textView.setText("Loan Amount");
                 textView.setPadding(10, 10, 10, 10);
                 tableHead.addView(textView);
                 
@@ -914,7 +914,7 @@ public class MainActivity extends Activity {
                         
                         col = new TextView(getApplicationContext());
                         col.setTextColor(Color.DKGRAY);
-                        col.setText(value.toString());
+                        col.setText(Expense.toCurrencyWithSymbol(Float.parseFloat(value.toString())));
                         col.setPadding(10, 10, 10, 10);
                         row.addView(col);
                         
@@ -945,7 +945,7 @@ public class MainActivity extends Activity {
                 
                 textView = new TextView(getApplicationContext());
                 textView.setTextColor(Color.BLACK);
-                textView.setText("Amount(Rs.)");
+                textView.setText("Spent Amount");
                 textView.setPadding(10, 10, 10, 10);
                 tableHead.addView(textView);
                 
@@ -963,7 +963,7 @@ public class MainActivity extends Activity {
                 		col = new TextView(getApplicationContext());
                         col.setTextColor(Color.BLUE);
                         col.setText(key);
-                        col.setWidth(150);
+                        col.setWidth(160);
                         col.setMaxLines(4);
                         col.setSingleLine(false);
                         col.setPadding(10, 10, 10, 10);
@@ -971,7 +971,7 @@ public class MainActivity extends Activity {
                         
                         col = new TextView(getApplicationContext());
                         col.setTextColor(Color.DKGRAY);
-                        col.setText(value.toString());
+                        col.setText(Expense.toCurrencyWithSymbol(Float.parseFloat(value.toString())));
                         col.setPadding(10, 10, 10, 10);
                         row.addView(col);
                         
