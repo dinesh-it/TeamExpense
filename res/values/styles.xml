@@ -20,5 +20,29 @@
     <style name="Theme.Default" parent="@android:style/Theme"></style>
     <style name="Theme.NoTitle" parent="@android:style/Theme.NoTitleBar"></style>
     <style name="Theme.FullScreen" parent="@android:style/Theme.NoTitleBar.Fullscreen"></style>
+    
+<style name="MyButtonText">
+    <item name="android:layout_width">wrap_content</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:textColor">#ffffff</item>
+    <item name="android:gravity">center</item>
+    <item name="android:layout_margin">3dp</item>
+    <item name="android:textSize">15sp</item>
+    <item name="android:textStyle">bold</item>
+    <item name="android:shadowColor">#000000</item>
+    <item name="android:shadowDx">1</item>
+    <item name="android:shadowDy">1</item>
+    <item name="android:shadowRadius">2</item>
+    </style>
+    
+<style name="MySmallButton">
+    <item name="android:textColor">#ffffff</item>
+    <item name="android:gravity">center</item>
+    <item name="android:textSize">13sp</item>
+    <item name="android:textStyle">bold</item>
+    <item name="android:shadowDx">1</item>
+    <item name="android:shadowDy">1</item>
+    <item name="android:shadowColor">#ff00ff</item>
+</style>
 
 </resources>

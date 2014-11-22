@@ -49,10 +49,10 @@ public class ExpensesView extends Activity {
 	private List<Expense> current_list;
     private DatabaseHandler db;
     public static String comment = null;
-    private String date, name, spent_for,opt;
+    private String date_from,date_to, name, spent_for,opt;
     private boolean team_only = false;
     private AutoCompleteTextView name_tx,spent_for_tx;
-    private EditText date_tx;
+    private EditText date_from_tx, date_to_tx;
     private Button search_btn;
     private List<Expense> import_list = null;
     
@@ -60,6 +60,15 @@ public class ExpensesView extends Activity {
 	private int month;
 	private int day;
 	private DatePicker date_picker;
+	private float sub_total;
+	
+	final String sort_desc = "⬇";
+	final String sort_asc = "⬆";
+	final String sort = "⬍";
+	private String date_sort = "desc";
+	private String name_sort = "asc";
+	private String item_sort = "asc";
+	private String amt_sort = "asc";
 	
 	String file_choosed = "";
 	 
@@ -72,16 +81,18 @@ public class ExpensesView extends Activity {
 	    setContentView(R.layout.expense_view);
 	    
 	    comment = null;
+	    sub_total = 0;
 	    db = new DatabaseHandler(this);
 	    sv = (ScrollView)findViewById(R.id.expense_view);
 	    
 	    filter_group = (LinearLayout)findViewById(R.id.filter_group);
 	    
-	    date_tx = (EditText)findViewById(R.id.list_date);
-	    date_tx.setTextColor(Color.BLACK);
-	    date_tx.setHint("Date");
-	    date_tx.setMaxLines(4);
-	    date_tx.setSingleLine(false);
+	    date_from_tx = (EditText)findViewById(R.id.list_date_from);
+	    date_to_tx = (EditText)findViewById(R.id.list_date_to);
+	    date_from_tx.setTextColor(Color.BLACK);
+	    date_from_tx.setHint("Date");
+	    date_from_tx.setMaxLines(4);
+	    date_from_tx.setSingleLine(false);
         
 	    name_tx = (AutoCompleteTextView)findViewById(R.id.list_name);
 	    name_tx.setTextColor(Color.BLACK);
@@ -107,8 +118,8 @@ public class ExpensesView extends Activity {
 		filter_group.setVisibility(View.INVISIBLE);
 	    
 	    if (extras != null) {
-	       date = extras.getString("sel_date");
-	       date_tx.setText(date);
+	       date_from = extras.getString("sel_date");
+	       date_from_tx.setText(date_from);
 	       name = extras.getString("sel_name");
 	       name_tx.setText(name);
 	       spent_for = extras.getString("sel_spent_for");
@@ -117,10 +128,10 @@ public class ExpensesView extends Activity {
 	       opt = extras.getString("show_option");
 	    }
 	    if(opt.equals("month")){
-	    	sv.addView(getExpenseTableView(db.getMonthExpenses(date,team_only)));
+	    	sv.addView(getExpenseTableView(db.getMonthExpenses(date_from,team_only)));
 	    }
 	    else if(opt.equals("filtered")){
-			sv.addView(getExpenseTableView(db.getFilteredExpenses(date,name,spent_for,team_only)));
+			sv.addView(getExpenseTableView(db.getFilteredExpenses(date_from,name,spent_for,team_only)));
 	    }
 	    else{
 			sv.addView(getExpenseTableView(db.getAllExpenses()));
@@ -139,14 +150,14 @@ public class ExpensesView extends Activity {
         search_btn.setOnClickListener(new OnClickListener(){
 			public void onClick(View view){
 				name = name_tx.getText().toString();
-			    date = date_tx.getText().toString() ;
+			    date_from = date_from_tx.getText().toString() ;
 			    spent_for = spent_for_tx.getText().toString();
 			    sv.removeAllViews();
-				sv.addView(getExpenseTableView(db.getFilteredExpenses(date,name,spent_for,team_only)));
+				sv.addView(getExpenseTableView(db.getFilteredExpenses(date_from,name,spent_for,team_only,date_sort,name_sort,item_sort,amt_sort)));
 		   }
 	    });
         
-        date_tx.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        date_from_tx.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 			@SuppressWarnings("deprecation")
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
@@ -193,20 +204,8 @@ public class ExpensesView extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item){
 		int id = item.getItemId();
-		if(id == R.id.action_cur_month){
-			final Calendar calendar1 = Calendar.getInstance();
-	        int year = calendar1.get(Calendar.YEAR);
-	        int month = calendar1.get(Calendar.MONTH) + 1;
-	        int day = calendar1.get(Calendar.DAY_OF_MONTH);
-	        date = day + "/" + (month + 1) + "/" + year;
-			sv.removeAllViews();
-			sv.addView(getExpenseTableView(db.getMonthExpenses(date , team_only)));
-			name = "";
-			spent_for = "";
-			return true;
-		}
-		else if(id == R.id.action_show_all){
-			date = name = spent_for = "";
+		if(id == R.id.action_show_all){
+			date_from = name = spent_for = "";
 			sv.removeAllViews();
 			sv.addView(getExpenseTableView(db.getAllExpenses()));
 			return true;
@@ -225,13 +224,6 @@ public class ExpensesView extends Activity {
 			}
 			return true;
 		}
-		else if(id == R.id.action_show_sel_month){
-			date = date_tx.getText().toString() ;
-			name = spent_for = "";
-			sv.removeAllViews();
-			sv.addView(getExpenseTableView(db.getMonthExpenses(date,team_only)));
-			return true;
-		}
 		else if(id == R.id.action_show_team_only){
 		    team_only = ! team_only;
 		    if(team_only){
@@ -243,7 +235,7 @@ public class ExpensesView extends Activity {
 		    	item.setIcon(R.drawable.ic_action_group);
 		    }
 		    sv.removeAllViews();
-			sv.addView(getExpenseTableView(db.getFilteredExpenses(date,name,spent_for,team_only)));
+			sv.addView(getExpenseTableView(db.getFilteredExpenses(date_from,name,spent_for,team_only)));
 			return true;
 		}
 		else if(id == R.id.action_export){
@@ -254,9 +246,33 @@ public class ExpensesView extends Activity {
 		    choose_file("import");
 			return true;
 		}
+		else if(id == R.id.action_show_sum){
+			if(sub_total == 0){
+				alert("Sum Value","Select multiple Amount fields from table and select this option");
+			}
+			else{
+				alert("Sum Value","Sum of selected fields is: " + sub_total);
+			}
+			return true;
+		}
 		//setContentView(sv);
 		return super.onOptionsItemSelected(item);
 	}
+	
+	public void alert(String title,String message){
+    	AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(ExpensesView.this);
+    	// set title
+		alertDialogBuilder.setTitle(title);	
+		alertDialogBuilder
+		.setMessage(message)
+		.setCancelable(false)      				
+		.setPositiveButton("Ok",new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog,int id) {
+				dialog.cancel();
+			}
+		});
+		alertDialogBuilder.show();
+    }
 	
 	protected Dialog onCreateDialog(int id) {
     	switch (id) {
@@ -274,7 +290,7 @@ public class ExpensesView extends Activity {
             month = selectedMonth;
             day = selectedDay;
             // set selected date into Text View
-            date_tx.setText(new StringBuilder().append(day).append('/').append(month+1).append('/').append(year));
+            date_from_tx.setText(new StringBuilder().append(day).append('/').append(month+1).append('/').append(year));
             // set selected date into Date Picker
             date_picker.init(year, month, day, null);
             name_tx.requestFocus();
@@ -613,6 +629,7 @@ public class ExpensesView extends Activity {
 	public TableLayout getExpenseTableView(List<Expense> expenses){
 		current_list = expenses; // for export data
 		float total_amt = 0;
+		notify("Filtered:" + date_from + "," + name + "," + spent_for + "," + team_only);
 		TableLayout tableLayout;
 		TableRow tableHead;
 	    TextView textView;
@@ -626,26 +643,130 @@ public class ExpensesView extends Activity {
 		
 		textView = new TextView(getApplicationContext());
         textView.setTextColor(Color.BLACK);
-        textView.setText("Date");
+        textView.setBackgroundResource(drawable.list_selector_background);
+        //textView.setText("Date " + sort_desc);
+        if(date_sort == null){
+			textView.setText("Date " + sort);
+		}
+		else if(date_sort.equalsIgnoreCase("desc")){
+			textView.setText("Date " + sort_desc);
+		}
+		else{
+			textView.setText("Date " + sort_asc);
+		}
         textView.setPadding(10, 10, 10, 10);
+        textView.setOnClickListener(new View.OnClickListener() {	
+			@Override
+			public void onClick(View v) {
+				if(date_sort == null){
+					date_sort = "desc";
+				}
+				else if(date_sort.equalsIgnoreCase("desc")){
+					date_sort = "asc";
+				}
+				else{
+					date_sort = null;
+				}
+				sv.removeAllViews();
+				sv.addView(getExpenseTableView(db.getFilteredExpenses(date_from,name,spent_for,team_only,date_sort,name_sort,item_sort,amt_sort)));
+			}
+		});
         tableHead.addView(textView);
         
         textView = new TextView(getApplicationContext());
         textView.setTextColor(Color.BLACK);
-        textView.setText("Paid By");
+        textView.setBackgroundResource(drawable.list_selector_background);
+        //textView.setText("Paid By " + sort_asc);
+        if(name_sort == null){
+			textView.setText("Paid By " + sort);
+		}
+		else if(name_sort.equalsIgnoreCase("desc")){
+			textView.setText("Paid By " + sort_desc);
+		}
+		else{
+			textView.setText("Paid By " + sort_asc);
+		}
         textView.setPadding(1, 10, 10, 10);
+        textView.setOnClickListener(new View.OnClickListener() {	
+			@Override
+			public void onClick(View v) {
+				if(name_sort == null){
+					name_sort = "desc";
+				}
+				else if(name_sort.equalsIgnoreCase("desc")){
+					name_sort = "asc";
+				}
+				else{
+					name_sort = null;
+				}
+				sv.removeAllViews();
+				sv.addView(getExpenseTableView(db.getFilteredExpenses(date_from,name,spent_for,team_only,date_sort,name_sort,item_sort,amt_sort)));
+			}
+		});
         tableHead.addView(textView);
         
         textView = new TextView(getApplicationContext());
         textView.setTextColor(Color.BLACK);
-        textView.setText("Spent For");
+        textView.setBackgroundResource(drawable.list_selector_background);
+        //textView.setText("Spent For" + sort_asc);
+        if(item_sort == null){
+			textView.setText("Spent For " + sort);
+		}
+		else if(item_sort.equalsIgnoreCase("desc")){
+			textView.setText("Spent For " + sort_desc);
+		}
+		else{
+			textView.setText("Spent For " + sort_asc);
+		}
         textView.setPadding(1, 10, 10, 10);
+        textView.setOnClickListener(new View.OnClickListener() {	
+			@Override
+			public void onClick(View v) {
+				if(item_sort == null){
+					item_sort = "desc";
+				}
+				else if(item_sort.equalsIgnoreCase("desc")){
+					item_sort = "asc";
+				}
+				else{
+					item_sort = null;
+				}
+				sv.removeAllViews();
+				sv.addView(getExpenseTableView(db.getFilteredExpenses(date_from,name,spent_for,team_only,date_sort,name_sort,item_sort,amt_sort)));
+			}
+		});
         tableHead.addView(textView);
         
         textView = new TextView(getApplicationContext());
         textView.setTextColor(Color.BLACK);
-        textView.setText("Amount");
+        textView.setBackgroundResource(drawable.list_selector_background);
+        //textView.setText("Amount " + sort_asc);
+        if(amt_sort == null){
+			textView.setText("Amount " + sort);
+		}
+		else if(amt_sort.equalsIgnoreCase("desc")){
+			textView.setText("Amount " + sort_desc);
+		}
+		else{
+			textView.setText("Amount " + sort_asc);
+		}
         textView.setPadding(1, 10, 10, 10);
+        textView.setOnClickListener(new View.OnClickListener() {	
+			@Override
+			public void onClick(View v) {
+				if(amt_sort == null){
+					amt_sort = "desc";
+				}
+				else if(amt_sort.equalsIgnoreCase("desc")){
+					amt_sort = "asc";
+				}
+				else{
+					amt_sort = null;
+				}
+				sv.removeAllViews();
+				sv.addView(getExpenseTableView(db.getFilteredExpenses(date_from,name,spent_for,team_only,date_sort,name_sort,item_sort,amt_sort)));
+			}
+		});
         tableHead.addView(textView);
         
         textView = new TextView(getApplicationContext());
@@ -653,7 +774,7 @@ public class ExpensesView extends Activity {
         textView.setText("     Comments");
         textView.setPadding(1, 10, 10, 10);
         tableHead.addView(textView);
-        
+
         tableLayout.addView(tableHead);
         
         for (Expense texp : expenses) {
@@ -723,20 +844,20 @@ public class ExpensesView extends Activity {
         return tableLayout;
 	}
 	
-	public TableRow createRowView(Expense texp){
+	public TableRow createRowView(final Expense texp){
 		final TableRow tableRow = new TableRow(getApplicationContext());
 		TextView textView;
         
         textView = new TextView(getApplicationContext());
         textView.setTextColor(Color.BLUE);
         textView.setText(Expense.toDateString(texp.getDate()));
-        textView.setPadding(5, 10, 5, 10);
+        textView.setPadding(5, 5, 5, 5);
         tableRow.addView(textView);
         
         textView = new TextView(getApplicationContext());
         textView.setTextColor(Color.BLACK);
         textView.setText(texp.getName());
-        textView.setPadding(1, 10, 5, 10);
+        textView.setPadding(1, 5, 5, 5);
         textView.setWidth(125);
         textView.setMaxLines(4);
         textView.setSingleLine(false);
@@ -745,7 +866,7 @@ public class ExpensesView extends Activity {
         textView = new TextView(getApplicationContext());
         textView.setTextColor(Color.DKGRAY);
         textView.setText(texp.getSpentFor());
-        textView.setPadding(1, 10, 5, 10);
+        textView.setPadding(1, 5, 5, 5);
         textView.setWidth(135);
         textView.setMaxLines(4);
         textView.setSingleLine(false);
@@ -754,18 +875,24 @@ public class ExpensesView extends Activity {
         textView = new TextView(getApplicationContext());
         textView.setTextColor(Color.RED);
         textView.setText(Expense.toCurrencyWithSymbol(texp.getAmt()));
-        textView.setPadding(5, 10, 10, 10);
+        textView.setPadding(1, 5, 1, 5);
         //textView.setPadding(left, top, right, bottom);
+        textView.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				sub_total += texp.getAmt();
+				v.setBackgroundColor(Color.CYAN);
+			}
+		});
         textView.setWidth(135);
-        textView.setMaxLines(4);
-        textView.setSingleLine(false);
         tableRow.addView(textView);
         
         textView = new TextView(getApplicationContext());
         textView.setTextColor(Color.DKGRAY);
         textView.setText(texp.getComment());
         registerForContextMenu(textView);
-        textView.setPadding(1, 10, 10, 10);
+        textView.setPadding(1, 5, 10, 5);
         tableRow.addView(textView);
         
         tableRow.setClickable(true);

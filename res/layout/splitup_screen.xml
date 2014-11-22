@@ -21,6 +21,33 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:text="Enter amount value above.\nSplitup will be shown below.\n\n\n" />
+     
+     <AutoCompleteTextView
+        android:id="@+id/setle_on"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textCapSentences"
+        android:ems="10"
+        android:hint="Setle on, eg: Room Rent" />
+     
+         <TableRow
+        android:id="@+id/setle_btn_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+        
+        <Button
+        android:id="@+id/setle_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Setled" />
+
+    	<Button
+        android:id="@+id/setle_as_loan_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save as loan" />
+
+    </TableRow>
         
      </LinearLayout>
     

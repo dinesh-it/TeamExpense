@@ -28,6 +28,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -51,16 +52,18 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
-	 private Button saveBtn, viewBtn, me_btn, self_btn;
+	 private Button saveBtn, viewBtn, me_btn, self_btn; 
+	 public String Month[] = {"Jan","Feb","Mar","April","May","June","July","Aug","Sep","Oct","Nov","Dec"};
 	 private EditText desc, amt;
 	 public EditText date_field;
-	 public AutoCompleteTextView spent_for, name;
+	 public AutoCompleteTextView spent_for, name, team_name;
 	 private TextView status, self_status, loan_status, item_status;
 	 private DatePicker date_picker;
 	 private TableLayout team_status_table, self_status_table, loan_status_table, item_status_table;
 	 private float share_amt;
 	 private JSONObject team_expense;
 	 private JSONObject loanVice = new JSONObject();
+	 private JSONObject loan_amt;
 	 
 	 private DbxAccountManager mDbxAcctMgr;
 	 private final String dbxAppKey = "qlqquc9asiaal4g";
@@ -81,6 +84,8 @@ public class MainActivity extends Activity {
 	 public boolean self_only = false;
 	 public boolean auto_sync = true;
 	 public String user_name = "";
+	 public String def_team_name = "";
+	 
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +94,8 @@ public class MainActivity extends Activity {
 
         date_field = (EditText)findViewById(R.id.editText1);
         date_field.setSingleLine(true);
+        team_name = (AutoCompleteTextView)findViewById(R.id.team_name);
+        team_name.setSingleLine(true);
         name = (AutoCompleteTextView)findViewById(R.id.autoCompleteTextView1);
         name.setSingleLine(true);
         spent_for = (AutoCompleteTextView)findViewById(R.id.autoCompleteTextView2);
@@ -144,6 +151,11 @@ public class MainActivity extends Activity {
         	else{
         		notify("Set your name in settings to pre fill your name.");
         	}
+        	team_name.setText("SELF");
+        }
+        notify("Default Team Name:" + def_team_name);
+        if( ! def_team_name.equalsIgnoreCase("")){
+        	team_name.setText(def_team_name);
         }
     }
     
@@ -157,7 +169,8 @@ public class MainActivity extends Activity {
     	            return true;
     	        }
     	        else if(actionId == EditorInfo.IME_ACTION_DONE) {
-    	        	saveBtn.requestFocus();
+    	        	//saveBtn.requestFocusFromTouch();
+    	        	validateAndSave();
     	            return true;
     	        }
     	        return false;
@@ -191,12 +204,7 @@ public class MainActivity extends Activity {
     	// Save button action
     	saveBtn.setOnClickListener(new OnClickListener(){
     			public void onClick(View view){
-    				if(date_field.getText() + "" == "" || name.getText() + "" == "" || spent_for.getText() + "" == "" || amt.getText() + "" == ""){
-    					Toast.makeText(MainActivity.this, "ERROR: Incomplete form", Toast.LENGTH_LONG).show();
-    				}
-    				else {
-    					saveExpense();
-    				}
+    				validateAndSave();
     		   }
     	});
     	
@@ -251,6 +259,15 @@ public class MainActivity extends Activity {
     			}
 		   }
     	});
+    }
+    
+    private void validateAndSave(){
+    	if(date_field.getText() + "" == "" || name.getText() + "" == "" || spent_for.getText() + "" == "" || amt.getText() + "" == ""){
+			Toast.makeText(MainActivity.this, "ERROR: Incomplete form", Toast.LENGTH_LONG).show();
+		}
+		else {
+			saveExpense();
+		}
     }
     
     private void saveExpense(){
@@ -412,6 +429,7 @@ public class MainActivity extends Activity {
     	self_only = prefs.getBoolean("pref_self_only", false);
     	auto_sync = prefs.getBoolean("prefs_auto_sync", true);
     	user_name = prefs.getString("pref_name", "");
+    	def_team_name = prefs.getString("pref_def_team_name", "");
     }
 
    @Override
@@ -463,6 +481,11 @@ public class MainActivity extends Activity {
 			dialog.show();
 			final TextView tx = (TextView)dialog.findViewById(R.id.splitup_details);
 			final EditText amt = (EditText)dialog.findViewById(R.id.split_amount);
+			AutoCompleteTextView tmp = (AutoCompleteTextView)dialog.findViewById(R.id.setle_on);
+			tmp.setVisibility(View.INVISIBLE);
+			TableRow tmp1 = (TableRow)dialog.findViewById(R.id.setle_btn_row);
+			tmp1.removeAllViews();
+        	tx.setText("Team Split up details are:\n\n");
 			amt.addTextChangedListener(new TextWatcher(){
 		        public void afterTextChanged(Editable s) {
 		        	if(amt.getText().toString().equals("")){
@@ -473,27 +496,40 @@ public class MainActivity extends Activity {
 		        		tx.setText("Sorry! No one is there in Team to share.\n\n");
 		        		return;
 		        	}
-		        	float given_amt = Integer.parseInt(amt.getText() + "");
+		        	float given_amt = Float.parseFloat(amt.getText() + "");
 		        	if(given_amt < 1){
+		        		tx.setText("Team Split up details are:\n\n");
 		        		return;
 		        	}
 		        	
 					Iterator<?> name_iter = team_expense.keys();
-		        	tx.setText("Team Split up details are:\n\n");
+		        	tx.setText("Team Split up details are:\n(Share + Loan)\n\n");
 		        	while (name_iter.hasNext()) {
 	                    String key = (String)name_iter.next();
 	                    try {
 	                        Object value = team_expense.get(key);
 	                        float splited_amt = ((given_amt/N)+share_amt)-Float.parseFloat(value.toString());
-	                        if(splited_amt < 0){
-	                        	tx.append(key + " has to get** : Rs " + (splited_amt * -1) + "\n");
+	                        float have_to_pay;
+	                        float l_amt = Float.parseFloat(loan_amt.get(key).toString());
+	                        // l_amt negative means he got money
+	                        // positive means he gave money
+	                        l_amt = l_amt * -1;
+	                        have_to_pay = splited_amt + l_amt;
+	                        String txt = new String();
+	                        if(have_to_pay < 0){
+	                        	txt = key + " have to get** :" + Expense.toCurrencyWithSymbol((have_to_pay * -1));
 	                        }
 	                        else{
-	                        	tx.append(key + " has to give : Rs " + splited_amt + "\n");
+	                        	txt = key + " have to give : " + Expense.toCurrencyWithSymbol(have_to_pay);
 	                        }
+	                        if(l_amt != 0){
+	                        	txt += "\n(" + Expense.toCurrency(splited_amt) + " + " + Expense.toCurrency(l_amt) + ")";
+	                        }
+	                        txt += "\n";
+	                        tx.append(txt);
 	                    }
 	                    catch(Exception e){
-	                    	//notify("!!!Something Went Wrong!!!");
+	                    	Log.println(10, "Error", e.getMessage() + "===");
 	                    }
 		        	}
 		        	tx.append("\n\n\n");
@@ -527,9 +563,279 @@ public class MainActivity extends Activity {
 							(float)0);
 					db.addExpense(exp);
 					Toast.makeText(MainActivity.this, "Added Successfuly", Toast.LENGTH_LONG).show();
+					dialog.cancel();
 				}
 			});
 			dialog.show();
+		}
+		else if(id == R.id.action_frwd_loans){
+			final Calendar calendar1 = Calendar.getInstance();
+            int t_year = calendar1.get(Calendar.YEAR);
+            int t_month = calendar1.get(Calendar.MONTH) + 1;
+            int t_day = calendar1.get(Calendar.DAY_OF_MONTH);
+            int month = this.month  + 1;
+            if( t_month == month ){
+            	notify("Please select previous months.");
+            	return super.onOptionsItemSelected(item);
+            }
+			int year = this.year;
+			List<Expense> expenses = db.getMonthExpenses("01/" + month + "/" + year ,false);
+        	if(expenses.size() < 1){
+        		notify("No expense for month " + Month[month - 1] + ", " + year);
+        	}
+        	else {
+        		if(loanVice.length() < 1){
+        			notify("No Loan for month " + Month[month - 1] + "/" + year);
+        		}
+        		else{
+        		notify("Forwarding loans from month:" + Month[month - 1] + "/" + year);
+            	Iterator<?> name_iter = loanVice.keys();
+
+                    while (name_iter.hasNext()) {
+                        String key = (String)name_iter.next();
+                        try {
+                            Object value = loanVice.get(key);
+                            String loan_names[] = key.split(" gave to ");
+                    		Expense exp = new Expense(loan_names[1],
+                    				Expense.toEpoch("28/" + month + "/" + year),
+                    				loan_names[0],
+                    				"Moved to " + t_day + "/" + t_month + "/" + t_year,
+                    				Float.parseFloat(value.toString()));
+                    		db.addExpense(exp);
+                    		
+                    		Expense exp1 = new Expense(loan_names[0],
+                    				Expense.toEpoch(t_day + "/" + t_month + "/" + t_year),
+                    				loan_names[1],
+                    				"From month " + Month[month - 1] + ", " + year,
+                    				Float.parseFloat(value.toString()));
+                    		db.addExpense(exp1);
+                    		
+                        } catch (JSONException e) {
+                        	Toast.makeText(MainActivity.this, "!!!Something Went Wrong!!!", Toast.LENGTH_LONG).show();
+                        }
+                    }
+            	}
+        	}
+        }
+		else if(id == R.id.action_setle_up){
+			final Dialog dialog = new Dialog(MainActivity.this);
+			dialog.setContentView(R.layout.splitup_screen);
+			dialog.setTitle("Setle Up Details");
+			dialog.setCancelable(true);
+			dialog.setCanceledOnTouchOutside(true);
+			dialog.show();
+			final TextView tx = (TextView)dialog.findViewById(R.id.splitup_details);
+			final EditText amt = (EditText)dialog.findViewById(R.id.split_amount);
+			amt.setVisibility(View.INVISIBLE);
+			final AutoCompleteTextView setle_on = (AutoCompleteTextView)dialog.findViewById(R.id.setle_on);
+			Button setle_btn = (Button)dialog.findViewById(R.id.setle_btn);
+	        Button setle_as_loan = (Button)dialog.findViewById(R.id.setle_as_loan_btn);
+			
+			if( team_expense.length() < 2){
+				tx.setText("Seems Expense not shared!");
+				setle_on.setVisibility(View.INVISIBLE);
+				TableRow tmp1 = (TableRow)dialog.findViewById(R.id.setle_btn_row);
+				tmp1.removeAllViews();
+				return true;
+			}
+			
+			tx.setText("    Calculating...   ");
+			Iterator<?> name_iter = team_expense.keys();
+			JSONObject share_bal = new JSONObject();
+        	while (name_iter.hasNext()) {
+                try {
+                	String name = name_iter.next().toString();
+                    Object value = team_expense.get(name);
+                    share_bal.put(name ,Float.parseFloat(value.toString()) - share_amt);
+                }
+                catch(Exception e){
+                	notify("Error in sharing Calc:" + e.getMessage());
+                }
+        	}
+        	
+			String names[] = db.getAllNames(null);
+        	String non_team_users[] = db.getAllNames("INDIVIDUAL");
+        	final JSONObject settled = new JSONObject();
+			try{
+			for(int i=0;i<names.length;i++){
+				if( indexOf(non_team_users,names[i]) == -1 ){
+					// he_has will be positive if he spent extra,
+					// negative if he spent less
+					float he_has = Float.parseFloat(share_bal.get(names[i]).toString());
+					for(int j=0;j<names.length;j++){
+						if( (indexOf(non_team_users,names[j]) == -1) && ( i != j)){
+								if( he_has < 0 ){ // he spent less
+									if(Float.parseFloat(share_bal.get(names[j]).toString()) > 0 ){ // some one has spent more
+										// some one spent more then he spent less
+										if(Float.parseFloat(share_bal.get(names[j]).toString()) > (he_has * -1)){ 
+											// who spent less should give to (->) some one who spent more then he spent less
+											settled.put(names[i] + " -> " + names[j], (he_has * -1));
+											// now some one got some money
+											share_bal.put(names[j],Float.parseFloat(share_bal.get(names[j]).toString()) + he_has);
+											he_has = 0;
+											break;
+										}
+									}
+								}
+							}
+						}
+					if( he_has < 0){
+						for(int j=0;j<names.length;j++){
+							if( (indexOf(non_team_users,names[j]) == -1) && ( i != j) ){
+									if( he_has < 0 ){
+										if(Float.parseFloat(share_bal.get(names[j]).toString()) > 0 ){
+											if(Float.parseFloat(share_bal.get(names[j]).toString()) > 0){
+												settled.put(names[i] + " -> " + names[j], share_bal.get(names[j]).toString());
+												share_bal.put(names[j],0);
+												he_has = Float.parseFloat(share_bal.get(names[j]).toString()) + he_has;
+											}
+										}
+									}
+								}
+							}
+					}
+				}
+			}
+			}
+			catch(Exception e){
+				notify("Error in settle:" + e.getMessage());
+			}
+			
+			if( settled.length() > 0){
+			tx.setText("Setle back as follows to tally team share:\n\n");
+			
+			String[] items_list = db.getAllItems().clone();
+	        ArrayAdapter<String> items_adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items_list);
+	        setle_on.setAdapter(items_adapter);
+	        
+	        setle_btn.setOnClickListener(new OnClickListener(){
+				public void onClick(View v){
+					String setle_on_val = setle_on.getText().toString();
+					setle_on_val.trim();
+					if(setle_on_val.length() > 0){
+					Iterator<?> settled_vals = settled.keys();
+					while (settled_vals.hasNext()) {
+		                String key = (String)settled_vals.next();
+		                try {
+		                    Object value = settled.get(key);
+		                    String names[] = key.split(" -> ");
+		                    
+		                    List<Expense> exp1 = db.getFilteredExpenses(date_field.getText().toString(), names[1], setle_on_val, true);
+		                    Expense texp1 = exp1.get(0);
+		                    if(texp1 != null){
+		                    texp1.amt = texp1.amt - Float.parseFloat(value.toString());
+		                    if( texp1.amt > 0){
+		                    	Expense texp0 = new Expense();
+			                    texp0.name = names[0];
+			                    texp0.spent_for = setle_on_val;
+			                    texp0.comment = "Setled by " + names[1];
+			                    texp0.date = Expense.toEpoch(date_field.getText().toString());
+			                    texp0.amt = Float.parseFloat(value.toString());
+			                    
+		                    	db.updateExpense(texp1);
+			                    db.addExpense(texp0);
+			                    
+		                    	Toast.makeText(MainActivity.this, "Updated "+ names[0] + " -> " + names[1] +" successfully", Toast.LENGTH_LONG).show();
+		                    }
+		                    else{
+		                    	Toast.makeText(MainActivity.this, "Please do manually for " + key, Toast.LENGTH_LONG).show();
+		                    }
+		                    }
+		                    else{
+		                    	Toast.makeText(MainActivity.this, "Please do manually for " + key, Toast.LENGTH_LONG).show();
+		                    }
+							dialog.cancel();
+		                }
+		                catch(Exception e){
+		                	e.printStackTrace();
+		                }
+		        	}
+					}
+					else{
+						Toast.makeText(MainActivity.this, "Setle on value is required", Toast.LENGTH_LONG).show();
+					}
+				}
+			});
+			
+			//String[] items_list = db.getAllItems().clone();
+	        //ArrayAdapter<String> items_adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items_list);
+	        //amt.setAdapter(items_adapter);
+	        setle_as_loan.setOnClickListener(new OnClickListener(){
+				public void onClick(View v){
+					String setle_on_val = setle_on.getText().toString();
+					setle_on_val.trim();
+					if(setle_on_val.length() > 0){
+					Iterator<?> settled_vals = settled.keys();
+					while (settled_vals.hasNext()) {
+		                String key = (String)settled_vals.next();
+		                try {
+		                    Object value = settled.get(key);
+		                    String names[] = key.split(" -> ");
+		                    
+		                    List<Expense> exp1 = db.getFilteredExpenses(date_field.getText().toString(), names[1], setle_on_val, true);
+		                    Expense texp1 = exp1.get(0);
+		                    if(texp1 != null){
+		                    texp1.amt = texp1.amt - Float.parseFloat(value.toString());
+		                    if( texp1.amt > 0){
+		                    	Expense texp0 = new Expense();
+			                    texp0.name = names[0];
+			                    texp0.spent_for = setle_on_val;
+			                    texp0.comment = "Setled by " + names[1];
+			                    texp0.date = Expense.toEpoch(date_field.getText().toString());
+			                    texp0.amt = Float.parseFloat(value.toString());
+			                    
+			                    Expense texp2 = new Expense();
+			                    texp2.name = names[1];
+			                    texp2.spent_for = names[0];
+			                    texp2.comment = "Setled for " + setle_on_val;
+			                    texp2.date = Expense.toEpoch(date_field.getText().toString());
+			                    texp2.amt = Float.parseFloat(value.toString());
+			                    
+		                    	db.updateExpense(texp1);
+			                    db.addExpense(texp0);
+			                    db.addExpense(texp2);
+			                    
+		                    	Toast.makeText(MainActivity.this,  "Updated "+ names[0] + " -> " + names[1] +" successfully", Toast.LENGTH_LONG).show();
+		                    }
+		                    else{
+		                    	Toast.makeText(MainActivity.this, "Please do manually for " + key, Toast.LENGTH_LONG).show();
+		                    }
+		                    }
+		                    else{
+		                    	Toast.makeText(MainActivity.this, "Please do manually for " + key, Toast.LENGTH_LONG).show();
+		                    }
+							dialog.cancel();
+		                }
+		                catch(Exception e){
+		                	e.printStackTrace();
+		                }
+		        	}
+					}
+					else{
+						Toast.makeText(MainActivity.this, "Setle on value is required", Toast.LENGTH_LONG).show();
+					}
+				}
+			});
+	        
+			Iterator<?> settled_vals = settled.keys();
+        	while (settled_vals.hasNext()) {
+                String key = (String)settled_vals.next();
+                try {
+                    Object value = settled.get(key);
+                    tx.append(key + "  : " + Expense.toCurrencyWithSymbol(Float.parseFloat(value.toString())) + "\n" );
+                }
+                catch(Exception e){
+                	notify("Error while printing:" + e.getMessage());
+                }
+        	}
+			}
+			else{
+				tx.setText("It seems already well shared. :)");
+				setle_on.setVisibility(View.INVISIBLE);
+				TableRow tmp1 = (TableRow)dialog.findViewById(R.id.setle_btn_row);
+				tmp1.removeAllViews();
+			}
+        	tx.append("\n");
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -585,6 +891,7 @@ public class MainActivity extends Activity {
         public void showStatus(){
         	List<Expense> expenses = db.getMonthExpenses(date_field.getText().toString(),false);
         	team_expense = new JSONObject();
+        	loan_amt = new JSONObject();
         	team_status_table.removeAllViews();
         	self_status_table.removeAllViews();
         	loan_status_table.removeAllViews();
@@ -668,7 +975,7 @@ public class MainActivity extends Activity {
         		    Toast.makeText(MainActivity.this, "!!!Something Went Wrong!!!", Toast.LENGTH_LONG).show();
         		  }
         	}
-        	status.setText("\n\nStatus for month of date " + date_field.getText());
+        	status.setText("\n\nStatus for month " + Month[month] + ", " + year);
         	
         	if(self_only){
         		selfVice = nameVice;
@@ -912,11 +1219,25 @@ public class MainActivity extends Activity {
                         col.setPadding(10, 10, 10, 10);
                         row.addView(col);
                         
+                        float amt = Float.parseFloat(value.toString());
                         col = new TextView(getApplicationContext());
                         col.setTextColor(Color.DKGRAY);
-                        col.setText(Expense.toCurrencyWithSymbol(Float.parseFloat(value.toString())));
+                        col.setText(Expense.toCurrencyWithSymbol(amt));
                         col.setPadding(10, 10, 10, 10);
                         row.addView(col);
+                        
+                        // Check if this loan is among team members
+                        String loaners[] = key.split(" gave to ");
+      				  	if((indexOf(non_team_users, loaners[0]) == -1) && (indexOf(non_team_users, loaners[0]) == -1) ){
+      				  		if(!loan_amt.has(loaners[0])){
+      				  			loan_amt.put(loaners[0],0);
+      				  		}
+      				  		if(!loan_amt.has(loaners[1])){
+      				  			loan_amt.put(loaners[1],0);
+      				  		}
+      				  		loan_amt.put(loaners[0], Float.parseFloat(loan_amt.get(loaners[0]).toString()) + amt);
+      				  		loan_amt.put(loaners[1], Float.parseFloat(loan_amt.get(loaners[1]).toString()) + (amt * -1));
+      				  	}
                         
                         setRowClickListener(row,"loan");
                         loan_status_table.addView(row);
@@ -992,7 +1313,7 @@ public class MainActivity extends Activity {
                 @Override
                 public void onClick(View arg0) {
                 	boolean team_only = true;
-                	String name = null,spent_for = null;
+                	String name = "",spent_for = "";
                 	String date = date_field.getText().toString();
                 	TextView tv = (TextView)tr.getChildAt(0);
                 	if(ptable.equals("item"))

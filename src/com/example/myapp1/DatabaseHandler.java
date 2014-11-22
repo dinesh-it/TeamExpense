@@ -39,7 +39,7 @@ public class DatabaseHandler extends SQLiteOpenHelper{
     	String CREATE_EXPENSES_TABLE = "CREATE TABLE " + TABLE_EXPENSES + "("
                 + KEY_ID + " INTEGER PRIMARY KEY," + KEY_NAME + " TEXT,"
                 + KEY_DATE + " INTEGER," + KEY_SPENT_FOR + " TEXT,"
-                + KEY_COMMENT + " TEXT," + KEY_AMT + " TEXT" + ")";
+                + KEY_COMMENT + " TEXT," + KEY_AMT + " DECIMAL(5,2)" + ")";
         db.execSQL(CREATE_EXPENSES_TABLE);
     }
 
@@ -145,6 +145,7 @@ public class DatabaseHandler extends SQLiteOpenHelper{
         		if(! (i == 0)){
         			selectQuery += ", ";
         		}
+        		names[i] = names[i].replace("'", "''");
         		selectQuery += "'" + names[i] + "'";
         	}
         	selectQuery += ")";
@@ -166,6 +167,10 @@ public class DatabaseHandler extends SQLiteOpenHelper{
     }
     
     public List<Expense> getFilteredExpenses(String date_str,String name, String spent_for,boolean team_only){
+    	return getFilteredExpenses(date_str,name, spent_for,team_only, "desc",null,null,null);
+    }
+    
+    public List<Expense> getFilteredExpenses(String date_str,String name, String spent_for,boolean team_only,String date_sort,String name_sort,String item_sort,String amt_sort){
     	String date[] = date_str.split("/");
     	long start_date;
     	if(!date_str.equals("")){
@@ -184,8 +189,10 @@ public class DatabaseHandler extends SQLiteOpenHelper{
         String selectQuery = "SELECT  * FROM " + TABLE_EXPENSES + 
         		" WHERE " + KEY_DATE + " BETWEEN " + start_date +" AND " + end_date;
         if(name != null && ! name.equals(""))
+        	name = name.replace("'", "''");
         	selectQuery += " AND " + KEY_NAME + " LIKE '%" + name + "%'";
         if(spent_for != null && ! spent_for.equals(""))
+        	spent_for = spent_for.replace("'", "''");
         	selectQuery += " AND " + KEY_SPENT_FOR + " LIKE '%" + spent_for + "%'";
         if(team_only){
         	selectQuery += " AND " + KEY_SPENT_FOR + " NOT IN (";
@@ -194,12 +201,39 @@ public class DatabaseHandler extends SQLiteOpenHelper{
         		if(! (i == 0)){
         			selectQuery += ", ";
         		}
+        		names[i] = names[i].replace("'", "''");
         		selectQuery += "'" + names[i] + "'";
         	}
         	selectQuery += ")";
         }
         
-        selectQuery +=	" ORDER BY " + KEY_DATE + " DESC";
+        String sort_qr = "";
+        
+        if(date_sort != null){
+        	sort_qr += KEY_DATE + " " + date_sort;
+        }
+        if(name_sort != null){
+        	if(!sort_qr.equalsIgnoreCase("")){
+        		sort_qr += " , "; 
+        	}
+        	sort_qr += KEY_NAME + " " + name_sort;
+        }
+        if(item_sort != null){
+        	if(!sort_qr.equalsIgnoreCase("")){
+        		sort_qr += " , "; 
+        	}
+        	sort_qr += KEY_SPENT_FOR + " " + item_sort;
+        }
+        if(amt_sort != null){
+        	if(!sort_qr.equalsIgnoreCase("")){
+        		sort_qr += " , "; 
+        	}
+        	sort_qr += KEY_AMT + " " + amt_sort;
+        }
+        
+        if(!sort_qr.equalsIgnoreCase("")){
+            selectQuery +=	" ORDER BY " + sort_qr;
+    	}
      
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);

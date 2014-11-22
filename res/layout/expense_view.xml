@@ -14,33 +14,57 @@
         android:layout_height="wrap_content" > 
     
     <EditText
-        android:id="@+id/list_date"
-        android:layout_width="110dp"
+        android:id="@+id/list_date_from"
+        android:layout_width="130dp"
         android:layout_height="wrap_content"
         android:singleLine="true"
+        android:hint="From Date"
         android:inputType="date" />
+    
+    <EditText
+        android:id="@+id/list_date_to"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:hint="To Date"
+        android:inputType="date" />
+    
+    <TextView
+        android:id="@+id/list_dummy_col"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:singleLine="true" />
+    
+    </TableRow>
+    
+    <TableRow
+        android:id="@+id/tableRow6"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" > 
     
     <AutoCompleteTextView
         android:id="@+id/list_name"
-        android:layout_width="110dp"
+        android:layout_width="130dp"
         android:layout_height="wrap_content"
         android:singleLine="true"
+        android:hint="Paid By"
         android:ems="10" />
     
     <AutoCompleteTextView
         android:id="@+id/list_spent"
-        android:layout_width="120dp"
+        android:layout_width="130dp"
         android:layout_height="wrap_content"
         android:singleLine="true"
+        android:hint="Paid For"
         android:ems="10" />
-    
-    </TableRow>
     
     <Button
         android:id="@+id/list_search"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Search" />
+        android:drawableStart="@drawable/ic_action_search"/>
+    
+    </TableRow>
     
     </LinearLayout>
     

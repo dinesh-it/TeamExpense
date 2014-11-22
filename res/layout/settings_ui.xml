@@ -5,10 +5,16 @@
         android:key="pref_key_general">
         
     <EditTextPreference
-                android:title="Name"
-                android:summary="Set Your Name"
-                android:inputType="textCapSentences"
-                android:key="pref_name"/>
+        android:title="Name"
+        android:summary="Set Your Name"
+        android:inputType="textCapSentences"
+        android:key="pref_name"/>
+    
+    <EditTextPreference
+        android:title="Default Team"
+        android:summary="Default Team name which will be filled by default."
+        android:inputType="textCapSentences"
+        android:key="pref_def_team"/>
         
     <CheckBoxPreference
         android:key="pref_self_only"

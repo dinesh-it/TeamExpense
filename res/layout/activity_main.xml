@@ -13,15 +13,29 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:text="Add New Expense:" />
+     <TableRow
+        android:id="@+id/date_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
 
     <EditText
         android:id="@+id/editText1"
-        android:layout_width="match_parent"
+        android:layout_width="120dp"
         android:layout_height="wrap_content"
-        android:contentDescription="This date will be used for all Status and View Transaction also."
         android:ems="10"
         android:hint="Date"
         android:inputType="date" />
+    
+    <AutoCompleteTextView
+        android:id="@+id/team_name"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textCapSentences"
+        android:ems="10"
+        android:hint="Team eg: Room" />
+    
+    </TableRow>
+    
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
@@ -36,8 +50,10 @@
     
     <Button
         android:id="@+id/me_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
+        style="@style/MySmallButton"
+        android:background="@drawable/black_btn"
+        android:layout_width="45dp"
+        android:layout_height="35dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_margin="0dp"
@@ -57,10 +73,12 @@
         android:ems="10"
         android:hint="Spent For eg: Food" />
 
-        <Button
+    <Button
         android:id="@+id/self_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
+        style="@style/MySmallButton"
+        android:background="@drawable/black_btn"
+        android:layout_width="45dp"
+        android:layout_height="35dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_margin="0dp"
@@ -92,14 +110,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
         
-        <Button
+    <Button
         android:id="@+id/button1"
+        style="@style/MyButtonText"
+        android:background="@drawable/green_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Save" />
+        android:text="Add" />
 
     <Button
         android:id="@+id/button2"
+        style="@style/MyButtonText"
+        android:background="@drawable/blue_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="View Expenses List" />
