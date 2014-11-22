@@ -152,8 +152,16 @@ public class ExpensesView extends Activity {
 				name = name_tx.getText().toString();
 			    date_from = date_from_tx.getText().toString() ;
 			    spent_for = spent_for_tx.getText().toString();
+			    date_to_tx.setText(Expense.toDateString(db.getEndOfMonthEpoch(date_from)));
+			    String date_to = date_to_tx.getText().toString();
+			    if(date_to.equalsIgnoreCase("")){
+			    	date_to = Expense.toDateString(db.getEndOfMonthEpoch(date_from));
+			    	date_to_tx.setText(date_to);
+			    }
+			    long from_epoch = Expense.toEpoch(date_from);
+			    long to_epoch = Expense.toEpoch(date_to);
 			    sv.removeAllViews();
-				sv.addView(getExpenseTableView(db.getFilteredExpenses(date_from,name,spent_for,team_only,date_sort,name_sort,item_sort,amt_sort)));
+			    sv.addView(getExpenseTableView(db.getFilteredExpenses(from_epoch,to_epoch,name,spent_for,team_only,date_sort,name_sort,item_sort,amt_sort)));
 		   }
 	    });
         

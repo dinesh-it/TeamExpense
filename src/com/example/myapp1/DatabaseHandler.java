@@ -124,17 +124,17 @@ public class DatabaseHandler extends SQLiteOpenHelper{
         return expenseList;
     }
     
-    public List<Expense> getMonthExpenses(String date_str,boolean team_only) {
-    	String date[] = date_str.split("/");
-    	if(date_str.equals("")){
-    		final Calendar calendar1 = Calendar.getInstance();
-	        int year = calendar1.get(Calendar.YEAR);
-	        int month = calendar1.get(Calendar.MONTH) + 1;
-	        int day = calendar1.get(Calendar.DAY_OF_MONTH);
-	        date = new String[] { day + "",month + "" ,year + ""};
-    	}
-    	long start_date = Expense.toEpoch("01/"+date[1]+"/"+date[2]);
-    	long end_date = Expense.toEpoch("01/"+ ( Integer.parseInt(date[1]) + 1 )+"/"+date[2]) - 1;
+    public List<Expense> getMonthExpenses(String from_date, boolean team_only){
+    	String date[] = from_date.split("/");
+    	from_date = "01/"+date[1]+"/"+date[2];
+    	long to_date = this.getEndOfMonthEpoch(from_date);
+    	return this.getMonthExpenses(from_date, Expense.toDateString(to_date), team_only);
+    }
+    
+    public List<Expense> getMonthExpenses(String from_date,String to_date, boolean team_only) {
+    	long start_date = Expense.toEpoch(from_date);
+    	// add 86400 to get till end of the day
+    	long end_date = Expense.toEpoch(to_date) + 86399;
         List<Expense> expenseList = new ArrayList<Expense>();
         String selectQuery = "SELECT  * FROM " + TABLE_EXPENSES + 
         		" WHERE " + KEY_DATE + " BETWEEN " + start_date +" AND " + end_date;
@@ -170,24 +170,32 @@ public class DatabaseHandler extends SQLiteOpenHelper{
     	return getFilteredExpenses(date_str,name, spent_for,team_only, "desc",null,null,null);
     }
     
-    public List<Expense> getFilteredExpenses(String date_str,String name, String spent_for,boolean team_only,String date_sort,String name_sort,String item_sort,String amt_sort){
+    public long getEndOfMonthEpoch(String date_str){
     	String date[] = date_str.split("/");
-    	long start_date;
-    	if(!date_str.equals("")){
-    		start_date = Expense.toEpoch("01/"+date[1]+"/"+date[2]);
-    	}
-    	else{
+    	if(date_str.equals("")){
     		final Calendar calendar1 = Calendar.getInstance();
 	        int year = calendar1.get(Calendar.YEAR);
 	        int month = calendar1.get(Calendar.MONTH) + 1;
 	        int day = calendar1.get(Calendar.DAY_OF_MONTH);
 	        date = new String[] { day + "",month + "" ,year + ""};
-	        start_date = 0;
     	}
-    	long end_date = Expense.toEpoch("01/"+ ( Integer.parseInt(date[1]) + 1 )+"/"+date[2]) - 1;
+    	return Expense.toEpoch("01/" + ( Integer.parseInt(date[1]) + 1 ) + "/" + date[2]) - 1;
+    }
+    
+    public List<Expense> getFilteredExpenses(String date_str,String name, String spent_for,boolean team_only,String date_sort,String name_sort,String item_sort,String amt_sort){
+    	String date[] = date_str.split("/");
+    	long start_date = 0;
+    	if(!date_str.equals("")){
+    		start_date = Expense.toEpoch("01/"+date[1]+"/"+date[2]);
+    	}
+    	long end_date = this.getEndOfMonthEpoch(date_str);
+    	return getFilteredExpenses(start_date,end_date,name, spent_for,team_only, "desc",null,null,null);
+    }
+    
+    public List<Expense> getFilteredExpenses(long from_epoch,long to_epoch,String name, String spent_for,boolean team_only,String date_sort,String name_sort,String item_sort,String amt_sort){
         List<Expense> expenseList = new ArrayList<Expense>();
         String selectQuery = "SELECT  * FROM " + TABLE_EXPENSES + 
-        		" WHERE " + KEY_DATE + " BETWEEN " + start_date +" AND " + end_date;
+        		" WHERE " + KEY_DATE + " BETWEEN " + from_epoch +" AND " + to_epoch;
         if(name != null && ! name.equals(""))
         	name = name.replace("'", "''");
         	selectQuery += " AND " + KEY_NAME + " LIKE '%" + name + "%'";

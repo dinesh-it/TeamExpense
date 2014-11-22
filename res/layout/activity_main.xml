@@ -127,6 +127,38 @@
         android:text="View Expenses List" />
 
     </TableRow>
+    
+    <TableRow
+        android:id="@+id/tableRow6"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_height="wrap_content" >
+    
+        <EditText
+        android:id="@+id/et_date_from"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:ems="10"
+        android:inputType="date" />
+        
+        <TextView
+        android:id="@+id/tv_to_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:text=" to "
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+        
+        <EditText
+        android:id="@+id/et_date_to"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:gravity="left"
+        android:inputType="date" />
+        
+    </TableRow>
 
     <TextView
         android:id="@+id/textView2"

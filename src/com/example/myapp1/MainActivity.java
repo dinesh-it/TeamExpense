@@ -9,12 +9,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.dropbox.sync.android.DbxAccountManager;
+import com.dropbox.sync.android.DbxException.Unauthorized;
 import com.dropbox.sync.android.DbxFile;
 import com.dropbox.sync.android.DbxFileSystem;
 import com.dropbox.sync.android.DbxPath;
 
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.NetworkInfo.State;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.R.drawable;
@@ -55,7 +57,7 @@ public class MainActivity extends Activity {
 	 private Button saveBtn, viewBtn, me_btn, self_btn; 
 	 public String Month[] = {"Jan","Feb","Mar","April","May","June","July","Aug","Sep","Oct","Nov","Dec"};
 	 private EditText desc, amt;
-	 public EditText date_field;
+	 public EditText date_field, date_field_from, date_field_to;
 	 public AutoCompleteTextView spent_for, name, team_name;
 	 private TextView status, self_status, loan_status, item_status;
 	 private DatePicker date_picker;
@@ -64,6 +66,8 @@ public class MainActivity extends Activity {
 	 private JSONObject team_expense;
 	 private JSONObject loanVice = new JSONObject();
 	 private JSONObject loan_amt;
+	 private boolean sync_wifi_only = false;
+	 private String date_picker_for = "";
 	 
 	 private DbxAccountManager mDbxAcctMgr;
 	 private final String dbxAppKey = "qlqquc9asiaal4g";
@@ -94,6 +98,10 @@ public class MainActivity extends Activity {
 
         date_field = (EditText)findViewById(R.id.editText1);
         date_field.setSingleLine(true);
+        date_field_from = (EditText)findViewById(R.id.et_date_from);
+        date_field_from.setSingleLine(true);
+        date_field_to = (EditText)findViewById(R.id.et_date_to);
+        date_field_to.setSingleLine(true);
         team_name = (AutoCompleteTextView)findViewById(R.id.team_name);
         team_name.setSingleLine(true);
         name = (AutoCompleteTextView)findViewById(R.id.autoCompleteTextView1);
@@ -184,6 +192,27 @@ public class MainActivity extends Activity {
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
 				if(hasFocus){
+					date_picker_for = "";
+					showDialog(DATE_DIALOG_ID);
+				}
+			}
+    	});
+    	date_field_from.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+			@SuppressWarnings("deprecation")
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
+				if(hasFocus){
+					date_picker_for = "from";
+					showDialog(DATE_DIALOG_ID);
+				}
+			}
+    	});
+    	date_field_to.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+			@SuppressWarnings("deprecation")
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
+				if(hasFocus){
+					date_picker_for = "to";
 					showDialog(DATE_DIALOG_ID);
 				}
 			}
@@ -281,7 +310,6 @@ public class MainActivity extends Activity {
 		Toast.makeText(MainActivity.this, "Saved Successfuly", Toast.LENGTH_LONG).show();
 		name.setText("");
 		spent_for.setText("");
-		desc.setText("");
 		amt.setText("");
 		me_btn.setText("Me");
 		self_btn.setText("Self");
@@ -310,7 +338,7 @@ public class MainActivity extends Activity {
     
     private void syncExpenseToDropbox() {
     	if(!DatabaseHandler.isModified){
-    		notify("Sync upto date.\n Nothing to sync.");
+    		notify("You haven't modified anything!");
     		return;
     	}
     	notify("Team Expense: Preparing for Sync!");
@@ -358,8 +386,16 @@ public class MainActivity extends Activity {
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager 
               = (ConnectivityManager) getSystemService(MainActivity.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+        State wifi = connectivityManager.getNetworkInfo(1).getState();
+        if (wifi == NetworkInfo.State.CONNECTED || wifi == NetworkInfo.State.CONNECTING) {
+        	return true;
+        }else if(!sync_wifi_only){
+        	State mobile = connectivityManager.getNetworkInfo(0).getState();
+        	if(mobile == NetworkInfo.State.CONNECTED || mobile == NetworkInfo.State.CONNECTING){
+        		return true;
+        	}
+        }
+        return false;
     }
     
     public void alert(String title,String message){
@@ -858,8 +894,15 @@ public class MainActivity extends Activity {
                 year = selectedYear;
                 month = selectedMonth;
                 day = selectedDay;
-                // set selected date into Text View
-                date_field.setText(new StringBuilder().append(day).append('/').append(month+1).append('/').append(year));
+                
+                if(date_picker_for.equalsIgnoreCase("")){
+                	// set selected date into Text View
+                	date_field.setText(new StringBuilder().append(day).append('/').append(month+1).append('/').append(year));
+                } else if (date_picker_for.equalsIgnoreCase("from")){
+                	date_field_from.setText(new StringBuilder().append(day).append('/').append(month+1).append('/').append(year));
+                } else if (date_picker_for.equalsIgnoreCase("to")){
+                	date_field_to.setText(new StringBuilder().append(day).append('/').append(month+1).append('/').append(year));
+                }
                 // set selected date into Date Picker
                 date_picker.init(year, month, day, null);
                 name.requestFocus();
@@ -889,7 +932,14 @@ public class MainActivity extends Activity {
         }
         
         public void showStatus(){
-        	List<Expense> expenses = db.getMonthExpenses(date_field.getText().toString(),false);
+        	if(date_field_from.getText().toString().equalsIgnoreCase("")){
+        		String date[] = date_field.getText().toString().split("/");
+        		date_field_from.setText("01/"+date[1]+"/"+date[2]);
+        	}
+        	if(date_field_to.getText().toString().equalsIgnoreCase("")){
+        		date_field_to.setText(Expense.toDateString(db.getEndOfMonthEpoch(date_field.getText().toString())));
+        	}
+        	List<Expense> expenses = db.getMonthExpenses(date_field_from.getText().toString(),date_field_to.getText().toString(), false);
         	team_expense = new JSONObject();
         	loan_amt = new JSONObject();
         	team_status_table.removeAllViews();
@@ -975,7 +1025,7 @@ public class MainActivity extends Activity {
         		    Toast.makeText(MainActivity.this, "!!!Something Went Wrong!!!", Toast.LENGTH_LONG).show();
         		  }
         	}
-        	status.setText("\n\nStatus for month " + Month[month] + ", " + year);
+        	status.setText("Status for month " + Month[month] + ", " + year);
         	
         	if(self_only){
         		selfVice = nameVice;
