@@ -1,0 +1,54 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" >
+    
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+        
+     <EditText
+        android:id="@+id/split_amount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Amount. eg: 1000"
+        android:inputType="numberDecimal" />
+        
+     <TextView
+        android:id="@+id/splitup_details"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:text="Enter amount value above.\nSplitup will be shown below.\n\n\n" />
+     
+     <AutoCompleteTextView
+        android:id="@+id/setle_on"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textCapSentences"
+        android:ems="10"
+        android:hint="Setle on, eg: Room Rent" />
+     
+         <TableRow
+        android:id="@+id/setle_btn_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+        
+        <Button
+        android:id="@+id/setle_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Setled" />
+
+    	<Button
+        android:id="@+id/setle_as_loan_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save as loan" />
+
+    </TableRow>
+        
+     </LinearLayout>
+    
+</ScrollView><!-- From: file:/home/dinesh/Office/Android/MyApp1/app/src/main/res/layout/splitup_screen.xml -->

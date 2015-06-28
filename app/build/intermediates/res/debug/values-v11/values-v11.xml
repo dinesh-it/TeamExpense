@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/home/dinesh/Office/Android/MyApp1/app/src/main/res/values-v11/styles.xml -->
+    <eat-comment/>
+    <style name="AppBaseTheme" parent="android:Theme.Holo.Light">
+        <!-- API 11 theme customizations can go here. -->
+    </style>
+    <style name="Theme.Default" parent="@android:style/Theme.Holo"/>
+    <style name="Theme.FullScreen" parent="@android:style/Theme.Holo.NoActionBar.Fullscreen"/>
+    <style name="Theme.NoTitle" parent="@android:style/Theme.Holo.NoActionBar"/>
+</resources>

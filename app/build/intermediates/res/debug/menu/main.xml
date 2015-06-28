@@ -1,0 +1,57 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:yourapp="http://schemas.android.com/apk/res-auto" >
+    
+    <item
+        android:id="@+id/action_help"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_action_help"
+        android:showAsAction="always"
+        android:title="Help"/>
+    
+    <item
+        android:id="@+id/action_about"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_action_about"
+        android:showAsAction="ifRoom"
+        android:title="About"/>
+    
+    <item
+        android:id="@+id/action_splitup"
+        android:icon="@drawable/ic_action_split"
+        android:orderInCategory="100"
+        android:showAsAction="always"
+        android:title="Calculate Share"/>
+    
+    <item
+        android:id="@+id/action_settings"
+        android:icon="@drawable/ic_action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:title="Settings"/>
+    
+    <item
+        android:id="@+id/action_sync_dropbox"
+        android:icon="@drawable/ic_action_refresh"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="Sync with Dropbox"/>
+    
+    <item
+        android:id="@+id/action_add_user"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="Add Payee/Payer"/>
+    
+    <item
+        android:id="@+id/action_frwd_loans"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="Move Loans"/>
+    
+    <item
+        android:id="@+id/action_setle_up"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="Setle Up (Tally)"/>
+    
+</menu><!-- From: file:/home/dinesh/Office/Android/MyApp1/app/src/main/res/menu/main.xml -->

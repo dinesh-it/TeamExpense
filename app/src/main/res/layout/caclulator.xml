@@ -1,0 +1,101 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" >
+    
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+  
+        <TextView
+        android:id="@+id/calc_history"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+        
+    <TableRow
+        android:id="@+id/calc_answer_grp1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+        
+        <TextView
+        android:id="@+id/calc_answer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+        
+         <EditText
+        android:id="@+id/calc_text"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:gravity="right"
+        android:inputType="numberDecimal" />
+        
+    </TableRow>
+    
+    <TableRow
+        android:id="@+id/calc_btn_grp1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+        
+         <Button
+        android:id="@+id/btn_clear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" C " />
+         
+          <Button
+        android:id="@+id/btn_percentage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" % " />
+        
+        <Button
+        android:id="@+id/btn_mul"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" X " />
+        
+        <Button
+        android:id="@+id/btn_divide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" / " />
+        
+    </TableRow>
+    
+    <TableRow
+        android:id="@+id/calc_btn_grp2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">   
+        
+        <Button
+        android:id="@+id/btn_ok"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" OK " />
+        
+        <Button
+        android:id="@+id/btn_minus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" - " />
+        
+        <Button
+        android:id="@+id/btn_plus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" + " />
+        
+        <Button
+        android:id="@+id/btn_equal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" = " />
+        
+    </TableRow>
+    
+    </LinearLayout>
+    
+</ScrollView>
