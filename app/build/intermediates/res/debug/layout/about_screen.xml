@@ -38,4 +38,4 @@
         android:text="This app is created for my own and fully open source.\n Any one can download and modify the source.\nhttp://github.com/dinesh-it/AndroidTeamExpense\n\n\n Happy Coding :)" />
     </LinearLayout>
 	
-</ScrollView><!-- From: file:/home/dinesh/Office/Android/MyApp1/app/src/main/res/layout/about_screen.xml -->
+</ScrollView><!-- From: file:/home/dinesh/Office/Android/TeamExpense/app/src/main/res/layout/about_screen.xml -->

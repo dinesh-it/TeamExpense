@@ -691,7 +691,7 @@ public class ExpensesView extends Activity {
 				else if(date_sort.equalsIgnoreCase("desc")){
 					date_sort = "asc";
 				}
-				else{
+				else {
 					date_sort = null;
 				}
 				sv.removeAllViews();

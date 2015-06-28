@@ -51,7 +51,7 @@ import android.widget.DatePicker;
 import android.widget.Toast;
 
 
-public class MainActivity extends Activity {
+public class ExpenseStatus extends Activity {
 
 	 private Button saveBtn, viewBtn, me_btn, self_btn, show_calc_btn, clear_btn; 
 	 public String Month[] = {"Jan","Feb","Mar","April","May","June","July","Aug","Sep","Oct","Nov","Dec"};
@@ -311,7 +311,7 @@ public class MainActivity extends Activity {
     
     private void show_calculator(){
     	// Show calculator dialogue
-		final Dialog dialog = new Dialog(MainActivity.this);
+		final Dialog dialog = new Dialog(ExpenseStatus.this);
 		dialog.setContentView(R.layout.caclulator);
 		dialog.setTitle("Calculator");
 		dialog.setCancelable(true);
@@ -470,7 +470,7 @@ public class MainActivity extends Activity {
     
     private void validateAndSave(){
     	if(date_field.getText() + "" == "" || name.getText() + "" == "" || spent_for.getText() + "" == "" || amt.getText() + "" == ""){
-			Toast.makeText(MainActivity.this, "ERROR: Incomplete form", Toast.LENGTH_LONG).show();
+			Toast.makeText(ExpenseStatus.this, "ERROR: Incomplete form", Toast.LENGTH_LONG).show();
 		}
 		else {
 			saveExpense();
@@ -485,7 +485,7 @@ public class MainActivity extends Activity {
 				desc.getText().toString(),
 				Float.parseFloat(""+amt.getText()));
 		db.addExpense(exp);
-		Toast.makeText(MainActivity.this, "Saved Successfuly", Toast.LENGTH_LONG).show();
+		Toast.makeText(ExpenseStatus.this, "Saved Successfuly", Toast.LENGTH_LONG).show();
 		clear_form();
 		showStatus();
     }
@@ -569,7 +569,7 @@ public class MainActivity extends Activity {
     
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager 
-              = (ConnectivityManager) getSystemService(MainActivity.CONNECTIVITY_SERVICE);
+              = (ConnectivityManager) getSystemService(ExpenseStatus.CONNECTIVITY_SERVICE);
         State wifi = connectivityManager.getNetworkInfo(1).getState();
         if (wifi == NetworkInfo.State.CONNECTED || wifi == NetworkInfo.State.CONNECTING) {
         	return true;
@@ -583,7 +583,7 @@ public class MainActivity extends Activity {
     }
     
     public void alert(String title,String message){
-    	AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+    	AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(ExpenseStatus.this);
     	// set title
 		alertDialogBuilder.setTitle(title);	
 		alertDialogBuilder
@@ -598,10 +598,10 @@ public class MainActivity extends Activity {
     }
     
     public void notify(String message){
-    	Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
+    	Toast.makeText(ExpenseStatus.this, message, Toast.LENGTH_LONG).show();
     }
     private void showList(String date,String name,String spent_for,String opt,boolean team_only){
-    	Intent listIntent = new Intent(MainActivity.this, ExpensesView.class);
+    	Intent listIntent = new Intent(ExpenseStatus.this, ExpensesView.class);
     	if(date.equals(""))
     		date = day + "/" + month + "/" + year;
     	date_field.setText(date);
@@ -610,7 +610,7 @@ public class MainActivity extends Activity {
 		listIntent.putExtra("sel_spent_for",spent_for);
 		listIntent.putExtra("show_option", opt);
 		listIntent.putExtra("team_only", team_only);
-		MainActivity.this.startActivity(listIntent);
+		ExpenseStatus.this.startActivity(listIntent);
     }
     
     public void onBackPressed() {
@@ -618,10 +618,10 @@ public class MainActivity extends Activity {
     		syncExpenseToDropbox();
     	}
     	if(name.getText() + "" == "" && spent_for.getText() + "" == "" && amt.getText() + "" == ""){
-    		MainActivity.this.finish();
+    		ExpenseStatus.this.finish();
     	}
     	else {
-    	AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+    	AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(ExpenseStatus.this);
     	// set title
 		alertDialogBuilder.setTitle("EXIT?");	
 		alertDialogBuilder
@@ -629,7 +629,7 @@ public class MainActivity extends Activity {
 		.setCancelable(false)      				
 		.setPositiveButton("Yes",new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog,int id) {
-				MainActivity.this.finish();
+				ExpenseStatus.this.finish();
 			}
 		  })
 		.setNegativeButton("No",new DialogInterface.OnClickListener() {
@@ -669,7 +669,7 @@ public class MainActivity extends Activity {
              startActivityForResult(i, SETTINGS_SCREEN);
 		}
 		else if(id == R.id.action_help){
-			Dialog dialog = new Dialog(MainActivity.this);
+			Dialog dialog = new Dialog(ExpenseStatus.this);
 			dialog.setContentView(R.layout.help_screen);
 			dialog.setTitle("Help");
 			dialog.setCancelable(true);
@@ -677,7 +677,7 @@ public class MainActivity extends Activity {
 			dialog.show();
 		}
 		else if(id == R.id.action_about){
-			Dialog dialog = new Dialog(MainActivity.this);
+			Dialog dialog = new Dialog(ExpenseStatus.this);
 			dialog.setContentView(R.layout.about_screen);
 			dialog.setTitle("About");
 			dialog.setCancelable(true);
@@ -693,7 +693,7 @@ public class MainActivity extends Activity {
 			}
 		}
 		else if(id == R.id.action_splitup){
-			Dialog dialog = new Dialog(MainActivity.this);
+			Dialog dialog = new Dialog(ExpenseStatus.this);
 			dialog.setContentView(R.layout.splitup_screen);
 			dialog.setTitle("Share Calculator");
 			dialog.setCancelable(true);
@@ -753,7 +753,7 @@ public class MainActivity extends Activity {
 	                    }
 	                    catch(Exception e){
 	                    	//Log.println(10, "Error", e.getMessage() + "===");
-	                    	Toast.makeText(MainActivity.this, "Error " + e.getMessage(), Toast.LENGTH_LONG).show();
+	                    	Toast.makeText(ExpenseStatus.this, "Error " + e.getMessage(), Toast.LENGTH_LONG).show();
 	                    }
 		        	}
 		        }
@@ -762,7 +762,7 @@ public class MainActivity extends Activity {
 		    }); 
 		}
 		else if(id == R.id.action_add_user){
-			final Dialog dialog = new Dialog(MainActivity.this);
+			final Dialog dialog = new Dialog(ExpenseStatus.this);
 			dialog.setContentView(R.layout.add_user_screen);
 			dialog.setTitle("Add User");
 			dialog.setCancelable(true);
@@ -785,7 +785,7 @@ public class MainActivity extends Activity {
 							user_type.getSelectedItem().toString(),
 							(float)0);
 					db.addExpense(exp);
-					Toast.makeText(MainActivity.this, "Added Successfuly", Toast.LENGTH_LONG).show();
+					Toast.makeText(ExpenseStatus.this, "Added Successfuly", Toast.LENGTH_LONG).show();
 					dialog.cancel();
 				}
 			});
@@ -834,14 +834,14 @@ public class MainActivity extends Activity {
                     		db.addExpense(exp1);
                     		
                         } catch (JSONException e) {
-                        	Toast.makeText(MainActivity.this, "!!!Something Went Wrong!!!", Toast.LENGTH_LONG).show();
+                        	Toast.makeText(ExpenseStatus.this, "!!!Something Went Wrong!!!", Toast.LENGTH_LONG).show();
                         }
                     }
             	}
         	}
         }
 		else if(id == R.id.action_setle_up){
-			final Dialog dialog = new Dialog(MainActivity.this);
+			final Dialog dialog = new Dialog(ExpenseStatus.this);
 			dialog.setContentView(R.layout.splitup_screen);
 			dialog.setTitle("Setle Up Details");
 			dialog.setCancelable(true);
@@ -958,14 +958,14 @@ public class MainActivity extends Activity {
 		                    	db.updateExpense(texp1);
 			                    db.addExpense(texp0);
 			                    
-		                    	Toast.makeText(MainActivity.this, "Updated "+ names[0] + " -> " + names[1] +" successfully", Toast.LENGTH_LONG).show();
+		                    	Toast.makeText(ExpenseStatus.this, "Updated "+ names[0] + " -> " + names[1] +" successfully", Toast.LENGTH_LONG).show();
 		                    }
 		                    else{
-		                    	Toast.makeText(MainActivity.this, "Please do manually for " + key, Toast.LENGTH_LONG).show();
+		                    	Toast.makeText(ExpenseStatus.this, "Please do manually for " + key, Toast.LENGTH_LONG).show();
 		                    }
 		                    }
 		                    else{
-		                    	Toast.makeText(MainActivity.this, "Please do manually for " + key, Toast.LENGTH_LONG).show();
+		                    	Toast.makeText(ExpenseStatus.this, "Please do manually for " + key, Toast.LENGTH_LONG).show();
 		                    }
 							dialog.cancel();
 		                }
@@ -975,7 +975,7 @@ public class MainActivity extends Activity {
 		        	}
 					}
 					else{
-						Toast.makeText(MainActivity.this, "Setle on value is required", Toast.LENGTH_LONG).show();
+						Toast.makeText(ExpenseStatus.this, "Setle on value is required", Toast.LENGTH_LONG).show();
 					}
 				}
 			});
@@ -1018,14 +1018,14 @@ public class MainActivity extends Activity {
 			                    db.addExpense(texp0);
 			                    db.addExpense(texp2);
 			                    
-		                    	Toast.makeText(MainActivity.this,  "Updated "+ names[0] + " -> " + names[1] +" successfully", Toast.LENGTH_LONG).show();
+		                    	Toast.makeText(ExpenseStatus.this,  "Updated "+ names[0] + " -> " + names[1] +" successfully", Toast.LENGTH_LONG).show();
 		                    }
 		                    else{
-		                    	Toast.makeText(MainActivity.this, "Please do manually for " + key, Toast.LENGTH_LONG).show();
+		                    	Toast.makeText(ExpenseStatus.this, "Please do manually for " + key, Toast.LENGTH_LONG).show();
 		                    }
 		                    }
 		                    else{
-		                    	Toast.makeText(MainActivity.this, "Please do manually for " + key, Toast.LENGTH_LONG).show();
+		                    	Toast.makeText(ExpenseStatus.this, "Please do manually for " + key, Toast.LENGTH_LONG).show();
 		                    }
 							dialog.cancel();
 		                }
@@ -1035,7 +1035,7 @@ public class MainActivity extends Activity {
 		        	}
 					}
 					else{
-						Toast.makeText(MainActivity.this, "Setle on value is required", Toast.LENGTH_LONG).show();
+						Toast.makeText(ExpenseStatus.this, "Setle on value is required", Toast.LENGTH_LONG).show();
 					}
 				}
 			});
@@ -1213,7 +1213,7 @@ public class MainActivity extends Activity {
         			  }
         		  } catch (JSONException e) {
         		    e.printStackTrace();
-        		    Toast.makeText(MainActivity.this, "!!!Something Went Wrong!!!", Toast.LENGTH_LONG).show();
+        		    Toast.makeText(ExpenseStatus.this, "!!!Something Went Wrong!!!", Toast.LENGTH_LONG).show();
         		  }
         	}
         	status.setText("Status for month " + Month[month] + ", " + year);
@@ -1278,7 +1278,7 @@ public class MainActivity extends Activity {
                         team_status_table.addView(row);
                         //status.append(key + " spent total " + value + " rs\n");
                     } catch (JSONException e) {
-                    	Toast.makeText(MainActivity.this, "!!!Something Went Wrong!!!", Toast.LENGTH_LONG).show();
+                    	Toast.makeText(ExpenseStatus.this, "!!!Something Went Wrong!!!", Toast.LENGTH_LONG).show();
                     }
                 }
                 TableRow row;
@@ -1412,7 +1412,7 @@ public class MainActivity extends Activity {
                         self_status_table.addView(row);
                         //status.append("For " + key + " you spent " + value + " rs\n");
                     } catch (JSONException e) {
-                    	Toast.makeText(MainActivity.this, "!!!Something Went Wrong!!!" + e.toString(), Toast.LENGTH_LONG).show();
+                    	Toast.makeText(ExpenseStatus.this, "!!!Something Went Wrong!!!" + e.toString(), Toast.LENGTH_LONG).show();
                     }
                 }
             }
@@ -1488,7 +1488,7 @@ public class MainActivity extends Activity {
                         loan_status_table.addView(row);
                         //status.append(key + " spent total " + value + " rs\n");
                     } catch (JSONException e) {
-                    	Toast.makeText(MainActivity.this, "!!!Something Went Wrong!!!", Toast.LENGTH_LONG).show();
+                    	Toast.makeText(ExpenseStatus.this, "!!!Something Went Wrong!!!", Toast.LENGTH_LONG).show();
                     }
                 }
         	}
@@ -1545,7 +1545,7 @@ public class MainActivity extends Activity {
                         item_status_table.addView(row);
                         //status.append("For " + key + " you spent " + value + " rs\n");
                     } catch (JSONException e) {
-                    	Toast.makeText(MainActivity.this, "!!!Something Went Wrong!!!", Toast.LENGTH_LONG).show();
+                    	Toast.makeText(ExpenseStatus.this, "!!!Something Went Wrong!!!", Toast.LENGTH_LONG).show();
                     }
                 }
         	}

@@ -189,7 +189,7 @@ public class DatabaseHandler extends SQLiteOpenHelper{
     		start_date = Expense.toEpoch("01/"+date[1]+"/"+date[2]);
     	}
     	long end_date = this.getEndOfMonthEpoch(date_str);
-    	return getFilteredExpenses(start_date,end_date,name, spent_for,team_only, "desc",null,null,null);
+    	return getFilteredExpenses(start_date,end_date,name, spent_for,team_only, date_sort, name_sort, item_sort, amt_sort);
     }
     
     public List<Expense> getFilteredExpenses(long from_epoch,long to_epoch,String name, String spent_for,boolean team_only,String date_sort,String name_sort,String item_sort,String amt_sort){

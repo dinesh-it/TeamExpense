@@ -19,7 +19,7 @@
         android:label="@string/team_expense"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.example.TeamExpense.MainActivity"
+            android:name="com.example.TeamExpense.ExpenseStatus"
             android:label="@string/team_expense" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
