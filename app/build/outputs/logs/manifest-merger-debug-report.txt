@@ -49,7 +49,7 @@ ADDED from AndroidManifest.xml:15:5
 		ADDED from AndroidManifest.xml:17:9
 	android:theme
 		ADDED from AndroidManifest.xml:19:9
-activity#com.example.myapp1.MainActivity
+activity#com.example.TeamExpense.MainActivity
 ADDED from AndroidManifest.xml:20:9
 	android:label
 		ADDED from AndroidManifest.xml:22:13
@@ -65,11 +65,11 @@ category#android.intent.category.LAUNCHER
 ADDED from AndroidManifest.xml:26:17
 	android:name
 		ADDED from AndroidManifest.xml:26:27
-activity#com.example.myapp1.ExpensesView
+activity#com.example.TeamExpense.ExpensesView
 ADDED from AndroidManifest.xml:29:9
 	android:name
 		ADDED from AndroidManifest.xml:29:19
-activity#com.example.myapp1.ExpenseSettings
+activity#com.example.TeamExpense.ExpenseSettings
 ADDED from AndroidManifest.xml:30:9
 	android:name
 		ADDED from AndroidManifest.xml:30:19

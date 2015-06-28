@@ -18,7 +18,7 @@
         android:label="@string/team_expense"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.example.myapp1.MainActivity"
+            android:name="com.example.TeamExpense.MainActivity"
             android:label="@string/team_expense" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,8 +26,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="ExpensesView"></activity>
-        <activity android:name="ExpenseSettings"></activity>
+        <activity android:name="com.example.TeamExpense.ExpensesView"></activity>
+        <activity android:name="com.example.TeamExpense.ExpenseSettings"></activity>
         <activity android:name="com.dropbox.sync.android.DbxAuthActivity" />
 <activity
   android:name="com.dropbox.client2.android.AuthActivity"

@@ -1,4 +1,4 @@
-package com.example.myapp1;
+package com.example.TeamExpense;
 
 
 import java.io.BufferedReader;
@@ -40,6 +40,8 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.myapp1.R;
 
 public class ExpensesView extends Activity {
 	

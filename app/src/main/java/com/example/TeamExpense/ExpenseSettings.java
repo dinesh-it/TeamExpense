@@ -1,7 +1,9 @@
-package com.example.myapp1;
+package com.example.TeamExpense;
 
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+
+import com.example.myapp1.R;
 
 public class ExpenseSettings extends PreferenceActivity {
 

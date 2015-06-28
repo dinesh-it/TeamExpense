@@ -1,4 +1,4 @@
-package com.example.myapp1;
+package com.example.TeamExpense;
 
 import java.io.PrintStream;
 import java.util.Calendar;
@@ -12,6 +12,7 @@ import com.dropbox.sync.android.DbxAccountManager;
 import com.dropbox.sync.android.DbxFile;
 import com.dropbox.sync.android.DbxFileSystem;
 import com.dropbox.sync.android.DbxPath;
+import com.example.myapp1.R;
 
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -29,7 +30,6 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
