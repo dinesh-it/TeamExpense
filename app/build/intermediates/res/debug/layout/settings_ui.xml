@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent">
     <PreferenceCategory 
         android:title="General"
         android:key="pref_key_general">
@@ -21,6 +23,12 @@
         android:title="Personal Expense Only"
         android:summary="Check this if you are using this app only for Personal Expenses."
         android:defaultValue="false" />
+
+    <CheckBoxPreference
+            android:key="pref_new_list"
+            android:title="Use new UI list"
+            android:summary="Check this if you want to use new UI for View Expense."
+            android:defaultValue="false" />
     
     </PreferenceCategory>
     

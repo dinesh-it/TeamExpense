@@ -9,5 +9,6 @@
         <item>TEAM</item>
         <item>INDIVIDUAL</item>
     </string-array>
+    <string name="title_activity_expenses_view2">ExpensesView2</string>
 
 </resources>

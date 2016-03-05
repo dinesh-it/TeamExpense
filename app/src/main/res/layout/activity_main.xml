@@ -147,6 +147,13 @@
         android:text="Clear" />
 
     </TableRow>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#ffffff"
+            android:id="@+id/status_layout">
     
     <TableRow
         android:id="@+id/tableRow6"
@@ -192,6 +199,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
     </TableLayout>
+
+        </LinearLayout>
     
     <TextView
         android:id="@+id/textView3"
@@ -218,9 +227,10 @@
     <TableLayout
         android:id="@+id/loan_status_table"
         android:layout_width="match_parent"
+        android:background="#ffffff"
         android:layout_height="wrap_content" >
     </TableLayout>
-    
+
     <TextView
         android:id="@+id/textView5"
         android:layout_width="match_parent"
@@ -228,19 +238,53 @@
         android:text="Medium Text"
         android:gravity="center"
         android:textAppearance="?android:attr/textAppearanceSmall" />
-    
+
     <TableLayout
         android:id="@+id/item_status_table"
+        android:background="#ffffff"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
     </TableLayout>
 
-    <DatePicker
-        android:id="@+id/datePicker1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="48dp"
-        android:layout_marginRight="20dp" />
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".ItemWiseList">
+
+            <view
+                android:id="@+id/item_wise_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                class="android.support.v7.widget.RecyclerView"
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="vertical" android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ProgressBar
+                android:id="@+id/p1"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:padding="5dp"
+                android:progressDrawable="@drawable/my_progress"
+                />
+
+        </RelativeLayout>
+
+        <DatePicker
+            android:id="@+id/datePicker1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="48dp"
+            android:layout_marginRight="20dp" />
 
 </LinearLayout>
+
 </ScrollView>

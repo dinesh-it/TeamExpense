@@ -53,5 +53,18 @@
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="Setle Up (Tally)"/>
-    
+
+    <item
+        android:id="@+id/action_share_status_image"
+        android:showAsAction="never"
+        android:title="Share Status as Image"
+        android:actionProviderClass=
+            "android.widget.ShareActionProvider" />
+
+    <item
+        android:id="@+id/action_share_status_text"
+        android:showAsAction="never"
+        android:title="Share Status as Text"
+        android:actionProviderClass=
+            "android.widget.ShareActionProvider" />
 </menu>

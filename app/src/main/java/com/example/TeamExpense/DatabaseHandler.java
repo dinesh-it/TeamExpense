@@ -9,6 +9,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class DatabaseHandler extends SQLiteOpenHelper{
 	// All Static variables
@@ -129,6 +130,49 @@ public class DatabaseHandler extends SQLiteOpenHelper{
     	from_date = "01/"+date[1]+"/"+date[2];
     	long to_date = this.getEndOfMonthEpoch(from_date);
     	return this.getMonthExpenses(from_date, Expense.toDateString(to_date), team_only);
+    }
+
+    public List<Expense> getMonthExpensesByDate(String from_date, boolean team_only){
+        String date[] = from_date.split("/");
+        from_date = "01/"+date[1]+"/"+date[2];
+        long to_date = this.getEndOfMonthEpoch(from_date);
+        long start_date = Expense.toEpoch(from_date);
+
+        List<Expense> expenseList = new ArrayList<Expense>();
+        //, SUM("  + KEY_AMT + ")
+        String selectQuery = "SELECT  " + KEY_DATE + ", SUM(" + KEY_AMT + ") AS "+ KEY_AMT +" FROM " + TABLE_EXPENSES +
+                " WHERE " + KEY_DATE + " BETWEEN " + start_date +" AND " + to_date;
+
+        if(team_only){
+            selectQuery += " AND " + KEY_SPENT_FOR + " NOT IN (";
+            String names[] = getAllNames(null);
+            for(int i=0;i< names.length;i++){
+                if(! (i == 0)){
+                    selectQuery += ", ";
+                }
+                names[i] = names[i].replace("'", "''");
+                selectQuery += "'" + names[i] + "'";
+            }
+            selectQuery += ")";
+        }
+
+        selectQuery += " GROUP BY " + KEY_DATE;
+        selectQuery += " ORDER BY " + KEY_DATE + " DESC";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+            // looping through all rows and adding to list
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                        Expense exp = new Expense();
+                        exp.date = cursor.getLong(cursor.getColumnIndex(KEY_DATE));
+                        exp.amt = cursor.getFloat(cursor.getColumnIndex(KEY_AMT));
+                        expenseList.add(exp);
+                } while (cursor.moveToNext());
+            }
+
+        return expenseList;
     }
     
     public List<Expense> getMonthExpenses(String from_date,String to_date, boolean team_only) {
