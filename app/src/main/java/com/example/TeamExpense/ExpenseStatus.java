@@ -1,6 +1,7 @@
 package com.example.TeamExpense;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -39,6 +40,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -81,6 +83,7 @@ public class ExpenseStatus extends Activity {
     private JSONObject selfVice = new JSONObject();
     private JSONObject loan_amt;
     private boolean sync_wifi_only = false;
+    private boolean back_already_pressed = false;
     private String date_picker_for = "";
     private String non_team_users[];
 
@@ -109,6 +112,8 @@ public class ExpenseStatus extends Activity {
     private RecyclerView mRecyclerView;
     private MyRecyclerAdapter adapter;
     private ArrayList<JSONObject> mDataset;
+    private String backup_file_path;
+    static String app_dir;
 
 
     @Override
@@ -195,6 +200,23 @@ public class ExpenseStatus extends Activity {
         adapter = new MyRecyclerAdapter(mDataset);
         adapter.notifyDataSetChanged();
         mRecyclerView.setAdapter(adapter);
+
+        // Getting a backup file path
+        if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            //handle case of no SDCARD present
+            app_dir = Environment.getDataDirectory() + File.separator + "TeamExpense";
+        } else {
+            app_dir = Environment.getExternalStorageDirectory() + File.separator + "TeamExpense";
+
+        }
+
+        //create app folder if not exist
+        File folder = new File(app_dir); //folder name
+        folder.mkdirs();
+
+        //create file
+        backup_file_path = folder.getPath() + File.separator + "team_expense.csv";
+        Log.d("DD", "Backup file path is: " + backup_file_path);
     }
 
     public void handleNextKey(final EditText from, final EditText to) {
@@ -549,6 +571,58 @@ public class ExpenseStatus extends Activity {
             return;
         }
         notify("Team Expense: Preparing for Sync!");
+        boolean success = true;
+        File file;
+        try {
+            file = new File(backup_file_path);
+
+            // Create file if not exist
+            if (!(file.exists())) {
+                try {
+                    file.createNewFile();
+                } catch (Exception e) {
+                    success = false;
+                    notify("File Create Error: " + e.getMessage());
+                    return;
+                }
+            }
+
+            if (!success) {
+                return;
+            }
+
+            FileOutputStream f1 = new FileOutputStream(file, false); //True = Append to file, false = Overwrite
+            PrintStream p = new PrintStream(f1);
+            String c1, c2, c3, c4, c5;
+            c1 = "\"Date\"";
+            c2 = "\"Paid By\"";
+            c3 = "\"Spent For\"";
+            c4 = "\"Amount\"";
+            c5 = "\"Comments\"";
+            p.println(c1 + "," + c2 + "," + c3 + "," + c4 + "," + c5);
+            List<Expense> expenses = db.getAllExpenses();
+            for (Expense exp : expenses) {
+                c1 = "\"" + Expense.toDateString(exp.getDate()) + "\"";
+                c2 = "\"" + exp.getName() + "\"";
+                c3 = "\"" + exp.getSpentFor() + "\"";
+                c4 = "\"" + exp.getAmt() + "\"";
+                c5 = "\"" + exp.getComment() + "\"";
+                p.println(c1 + "," + c2 + "," + c3 + "," + c4 + "," + c5);
+            }
+            p.close();
+            f1.close();
+            DatabaseHandler.isModified = false;
+        } catch (Exception e) {
+            success = false;
+            notify("File Write Error:" + e.getMessage());
+            db.close();
+            return;
+        }
+
+        if (!success) {
+            return;
+        }
+
         try {
             DbxPath csv_path = new DbxPath("team_expense.csv");
             DbxFileSystem dbxFs = DbxFileSystem.forAccount(mDbxAcctMgr.getLinkedAccount());
@@ -558,26 +632,8 @@ public class ExpenseStatus extends Activity {
             } else {
                 csv_file = dbxFs.open(csv_path);
             }
-            PrintStream p = new PrintStream(csv_file.getWriteStream());
-            String c1, c2, c3, c4, c5;
-            c1 = "\"Date\"";
-            c2 = "\"Paid By\"";
-            c3 = "\"Spent For\"";
-            c4 = "\"Amount\"";
-            c5 = "\"Comments\"";
-            p.println(c1 + "," + c2 + "," + c3 + "," + c4 + "," + c5);
-            List<Expense> expense_list = db.getAllExpenses();
-            for (Expense exp : expense_list) {
-                c1 = "\"" + Expense.toDateString(exp.getDate()) + "\"";
-                c2 = "\"" + exp.getName() + "\"";
-                c3 = "\"" + exp.getSpentFor() + "\"";
-                c4 = "\"" + exp.getAmt() + "\"";
-                c5 = "\"" + exp.getComment() + "\"";
-                p.println(c1 + "," + c2 + "," + c3 + "," + c4 + "," + c5);
-            }
-            p.close();
+            csv_file.writeFromExistingFile(file, false);
             csv_file.close();
-            DatabaseHandler.isModified = false;
             if (!isNetworkAvailable()) {
                 notify("Team Expense: Will be synced once you are online.");
             } else {
@@ -587,6 +643,7 @@ public class ExpenseStatus extends Activity {
             notify("Team Expense: Sync Failed! " + e.getMessage());
         }
     }
+
 
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
@@ -643,8 +700,15 @@ public class ExpenseStatus extends Activity {
     }
 
     public void onBackPressed() {
+        if(back_already_pressed){
+            return;
+        }
+
+        back_already_pressed = true;
         if (auto_sync && DatabaseHandler.isModified && mDbxAcctMgr.hasLinkedAccount()) {
+            notify("preparing auto sync");
             syncExpenseToDropbox();
+            ExpenseStatus.this.finish();
         }
         if (name.getText() + "" == "" && spent_for.getText() + "" == "" && amt.getText() + "" == "") {
             ExpenseStatus.this.finish();
@@ -768,7 +832,7 @@ public class ExpenseStatus extends Activity {
             scr_shot_btn.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     Uri uri1 = Util.takeScreenshot(full_dialog, "team_expense_splitups.jpg", ExpenseStatus.this);
-                    if(uri1 != null){
+                    if (uri1 != null) {
                         Intent sharingIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
                         sharingIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                         sharingIntent.setType("image/jpeg");
@@ -934,7 +998,7 @@ public class ExpenseStatus extends Activity {
             scr_shot_btn.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     Uri uri1 = Util.takeScreenshot(full_dialog, "team_expense_setltups.jpg", ExpenseStatus.this);
-                    if(uri1 != null){
+                    if (uri1 != null) {
                         Intent sharingIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
                         sharingIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                         sharingIntent.setType("image/jpeg");

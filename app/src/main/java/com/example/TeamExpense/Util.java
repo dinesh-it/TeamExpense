@@ -23,14 +23,14 @@ public class Util {
 
         try {
             // image naming and path  to include sd card  appending name you choose for file
-            File sdCardDirectory = Environment.getExternalStorageDirectory();
+            //File sdCardDirectory = Environment.getExternalStorageDirectory();
 
             // create bitmap screen capture
             v.setDrawingCacheEnabled(true);
             Bitmap bitmap = Bitmap.createBitmap(v.getDrawingCache());
             v.setDrawingCacheEnabled(false);
 
-            File imageFile = new File(sdCardDirectory, file_name);
+            File imageFile = new File(ExpenseStatus.app_dir, file_name);
 
             FileOutputStream outputStream = new FileOutputStream(imageFile);
             int quality = 100;

@@ -25,7 +25,7 @@
         android:ems="10"
         android:hint="Date"
         android:inputType="date" />
-    
+
     <AutoCompleteTextView
         android:id="@+id/team_name"
         android:layout_width="fill_parent"
@@ -33,9 +33,9 @@
         android:inputType="textCapSentences"
         android:ems="10"
         android:hint="Team eg: Room" />
-    
+
     </TableRow>
-    
+
     <TableRow
         android:id="@+id/name_row"
         android:layout_width="match_parent"
@@ -49,7 +49,7 @@
         android:inputType="textCapSentences"
         android:ems="10"
         android:hint="Paid By. eg: Dinesh" />
-    
+
     <Button
         android:id="@+id/me_btn"
         style="@style/MySmallButton"
@@ -58,7 +58,7 @@
         android:layout_height="35dp"
         android:text="Me" />
     </TableRow>
-    
+
    <TableRow
         android:id="@+id/spent_for_row"
         android:layout_width="match_parent"
@@ -80,7 +80,7 @@
         android:layout_width="wrap_content"
         android:layout_height="35dp"
         android:text="Self" />
-        
+
          </TableRow>
 
     <EditText
@@ -90,7 +90,7 @@
         android:inputType="textCapSentences"
         android:ems="10"
         android:hint="Comments" />
-    
+
    <TableRow
         android:id="@+id/amount_row"
         android:layout_width="match_parent"
@@ -104,7 +104,7 @@
         android:ems="10"
         android:hint="Amount. eg: 35.00"
         android:inputType="numberDecimal" />
-    
+
     <Button
         android:id="@+id/btn_show_calc"
         style="@style/MySmallButton"
@@ -114,14 +114,14 @@
         android:text="Calc" />
     </TableRow>
 
-    
+
 
     <TableRow
         android:id="@+id/tableRow5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center" >
-        
+
     <Button
         android:id="@+id/button1"
         style="@style/MyButtonText"
@@ -137,7 +137,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="View Expenses List" />
-    
+
     <Button
         android:id="@+id/button3"
         style="@style/MyButtonText"
@@ -154,13 +154,13 @@
             android:orientation="vertical"
             android:background="#ffffff"
             android:id="@+id/status_layout">
-    
+
     <TableRow
         android:id="@+id/tableRow6"
         android:layout_width="match_parent"
         android:gravity="center"
         android:layout_height="wrap_content" >
-    
+
         <EditText
         android:id="@+id/et_date_from"
         android:layout_width="120dp"
@@ -168,7 +168,7 @@
         android:gravity="right"
         android:ems="10"
         android:inputType="date" />
-        
+
         <TextView
         android:id="@+id/tv_to_label"
         android:layout_width="wrap_content"
@@ -176,7 +176,7 @@
         android:gravity="left"
         android:text=" to "
         android:textAppearance="?android:attr/textAppearanceSmall" />
-        
+
         <EditText
         android:id="@+id/et_date_to"
         android:layout_width="120dp"
@@ -184,7 +184,7 @@
         android:ems="10"
         android:gravity="left"
         android:inputType="date" />
-        
+
     </TableRow>
 
     <TextView
@@ -201,7 +201,7 @@
     </TableLayout>
 
         </LinearLayout>
-    
+
     <TextView
         android:id="@+id/textView3"
         android:layout_width="match_parent"
@@ -209,13 +209,13 @@
         android:text="Medium Text"
         android:gravity="center"
         android:textAppearance="?android:attr/textAppearanceSmall" />
-    
+
     <TableLayout
         android:id="@+id/self_status_table"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
     </TableLayout>
-    
+
     <TextView
         android:id="@+id/textView4"
         android:layout_width="match_parent"
@@ -223,7 +223,7 @@
         android:text="Medium Text"
         android:gravity="center"
         android:textAppearance="?android:attr/textAppearanceSmall" />
-    
+
     <TableLayout
         android:id="@+id/loan_status_table"
         android:layout_width="match_parent"
