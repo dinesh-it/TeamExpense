@@ -833,7 +833,7 @@ public class ExpenseStatus extends Activity {
                 public void onClick(View v) {
                     Uri uri1 = Util.takeScreenshot(full_dialog, "team_expense_splitups.jpg", ExpenseStatus.this);
                     if (uri1 != null) {
-                        Intent sharingIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
+                        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                         sharingIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                         sharingIntent.setType("image/jpeg");
                         sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, "Expense Details");
