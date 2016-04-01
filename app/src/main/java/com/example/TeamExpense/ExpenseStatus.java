@@ -825,7 +825,12 @@ public class ExpenseStatus extends Activity {
             dialog.show();
             final TextView tx = (TextView) dialog.findViewById(R.id.splitup_details);
             final EditText amt = (EditText) dialog.findViewById(R.id.split_amount);
+
+            // Hide These views, these are only used for setle up option
             AutoCompleteTextView tmp = (AutoCompleteTextView) dialog.findViewById(R.id.setle_on);
+            tmp.setVisibility(View.GONE);
+            TableRow tmp1 = (TableRow) dialog.findViewById(R.id.setle_btn_row);
+            tmp1.setVisibility(View.GONE);
 
             final LinearLayout full_dialog = (LinearLayout) dialog.findViewById(R.id.full_dialog);
             Button scr_shot_btn = (Button) dialog.findViewById(R.id.share_btn);
@@ -844,9 +849,7 @@ public class ExpenseStatus extends Activity {
                 }
             });
 
-            tmp.setVisibility(View.INVISIBLE);
-            TableRow tmp1 = (TableRow) dialog.findViewById(R.id.setle_btn_row);
-            tmp1.removeAllViews();
+            Button share_txt_btn = (Button) dialog.findViewById(R.id.share_txt_btn);
             tx.setText("Team Split up details are:\n\n");
             amt.addTextChangedListener(new TextWatcher() {
                 public void afterTextChanged(Editable s) {
@@ -883,7 +886,7 @@ public class ExpenseStatus extends Activity {
                             String txt = new String();
                             if (have_to_pay < 0) {
                                 txt = key + " have to get** :" + Expense.toCurrencyWithSymbol((have_to_pay * -1));
-                            } else {
+                            } else if(have_to_pay >= 1){ // to avoid saying have to give 0.50 Rs
                                 txt = key + " have to give : " + Expense.toCurrencyWithSymbol(have_to_pay);
                             }
                             if (l_amt != 0) {
@@ -904,6 +907,23 @@ public class ExpenseStatus extends Activity {
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
                 }
             });
+
+            share_txt_btn.setOnClickListener(new OnClickListener() {
+                public void onClick(View v) {
+                    String share_details = tx.getText().toString();
+                    if(!share_details.equalsIgnoreCase("")) {
+                        String for_amt = amt.getText().toString();
+
+                        share_details = "To pay: " + Expense.toCurrencyWithSymbol(Float.parseFloat(for_amt)) + "\n\n" + share_details;
+                        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+                        sharingIntent.setType("text/plain");
+                        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, share_details);
+                        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Team Splitup Details");
+                        startActivity(Intent.createChooser(sharingIntent, "Share via"));
+                    }
+                }
+            });
+
         } else if (id == R.id.action_add_user) {
             final Dialog dialog = new Dialog(ExpenseStatus.this);
             dialog.setContentView(R.layout.add_user_screen);
@@ -995,11 +1015,12 @@ public class ExpenseStatus extends Activity {
 
             final LinearLayout full_dialog = (LinearLayout) dialog.findViewById(R.id.full_dialog);
             Button scr_shot_btn = (Button) dialog.findViewById(R.id.share_btn);
+            Button share_txt_btn = (Button) dialog.findViewById(R.id.share_txt_btn);
             scr_shot_btn.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     Uri uri1 = Util.takeScreenshot(full_dialog, "team_expense_setltups.jpg", ExpenseStatus.this);
                     if (uri1 != null) {
-                        Intent sharingIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
+                        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                         sharingIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                         sharingIntent.setType("image/jpeg");
                         sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, "Expense Details");
@@ -1203,6 +1224,19 @@ public class ExpenseStatus extends Activity {
                 tmp1.removeAllViews();
             }
             tx.append("\n");
+
+            share_txt_btn.setOnClickListener(new OnClickListener() {
+                public void onClick(View v) {
+                    String share_details = tx.getText().toString();
+                    if (!share_details.equalsIgnoreCase("")) {
+                        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+                        sharingIntent.setType("text/plain");
+                        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, share_details);
+                        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Team members share for tally");
+                        startActivity(Intent.createChooser(sharingIntent, "Share via"));
+                    }
+                }
+            });
         }
         return super.onOptionsItemSelected(item);
     }
