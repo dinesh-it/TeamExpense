@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffffff"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <LinearLayout
+            android:id="@+id/linear_left"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/date_calender_box"
+            android:orientation="vertical"
+            android:layout_weight="0.2">
+
+           <!--<TextView
+                android:id="@+id/expense_date_day"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:contentDescription="Date-day"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="Mon"
+                android:textSize="10sp" /> -->
+
+            <TextView
+                android:id="@+id/expense_date"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:contentDescription="Date-day"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:text="28"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/expense_date_month"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="Jan, 2016"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginLeft="2dp"
+            android:layout_weight="0.5">
+
+            <TextView
+                android:id="@+id/loan_between_text"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:text="Dinesh -> Baskar"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/loan_for_text"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="2"
+                android:text="rice, oil, gobi"
+                android:textSize="13sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginLeft="1dp"
+            android:background="@drawable/money_box"
+            android:gravity="center"
+            android:layout_weight="0.3">
+
+            <TextView
+                android:id="@+id/loan_amount"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="200.00"
+                android:textColor="#015029"
+                android:textSize="20sp" />
+
+            <!--<TextView
+                android:id="@+id/currency_symbol"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Rs"
+                android:textSize="15sp" />-->
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray" />
+
+</LinearLayout>

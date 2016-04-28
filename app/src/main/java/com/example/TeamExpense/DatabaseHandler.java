@@ -174,7 +174,44 @@ public class DatabaseHandler extends SQLiteOpenHelper{
 
         return expenseList;
     }
-    
+
+    public List<Expense> getLoanDetails(String month_of_date, String loan_from, String loan_to){
+        String date[] = month_of_date.split("/");
+        month_of_date = "01/"+date[1]+"/"+date[2];
+        long to_date = this.getEndOfMonthEpoch(month_of_date);
+        long start_date = Expense.toEpoch(month_of_date);
+
+        List<Expense> expenseList = new ArrayList<Expense>();
+        String selectQuery = "SELECT * FROM " + TABLE_EXPENSES +
+                " WHERE " + KEY_DATE + " BETWEEN " + start_date +" AND " + to_date +
+                " AND (" +
+                "(" + KEY_NAME + " = '" + loan_from + "' AND " + KEY_SPENT_FOR + " = '" + loan_to + "')" +
+                " OR " +
+                "(" + KEY_NAME + " = '" + loan_to + "' AND " + KEY_SPENT_FOR + " = '" + loan_from + "')" +
+                ") ORDER BY " + KEY_DATE + " DESC;";
+
+        Log.d("DB QUERY", "getLoanDetails:" + selectQuery);
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                Expense exp = new Expense();
+                exp.date = cursor.getLong(cursor.getColumnIndex(KEY_DATE));
+                exp.amt = cursor.getFloat(cursor.getColumnIndex(KEY_AMT));
+                exp.comment = cursor.getString(cursor.getColumnIndex(KEY_COMMENT));
+                exp.id = cursor.getInt(cursor.getColumnIndex(KEY_ID));
+                exp.name = cursor.getString(cursor.getColumnIndex(KEY_NAME));
+                exp.spent_for = cursor.getString(cursor.getColumnIndex(KEY_SPENT_FOR));
+                expenseList.add(exp);
+            } while (cursor.moveToNext());
+        }
+
+        return expenseList;
+    }
+
     public List<Expense> getMonthExpenses(String from_date,String to_date, boolean team_only) {
     	long start_date = Expense.toEpoch(from_date);
     	// add 86400 to get till end of the day

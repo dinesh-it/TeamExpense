@@ -1751,7 +1751,19 @@ public class ExpenseStatus extends Activity {
                     String str[] = tv.getText().toString().split(" gave to ");
                     name = str[0];
                     spent_for = str[1];
-                    team_only = false;
+                    //team_only = false;
+
+                    Intent listIntent;
+                    listIntent = new Intent(ExpenseStatus.this, LoanDetailsActivity.class);
+
+                    if (date.equals(""))
+                        date = day + "/" + month + "/" + year;
+
+                    listIntent.putExtra("month_date", date);
+                    listIntent.putExtra("loan_from", name);
+                    listIntent.putExtra("loan_to", spent_for);
+                    ExpenseStatus.this.startActivity(listIntent);
+                    return;
                 }
 
                 showList(date, name, spent_for, "filtered", team_only);

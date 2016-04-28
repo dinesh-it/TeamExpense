@@ -1,6 +1,6 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /home/dinesh/Office/Android/TeamExpense/app/src/main/AndroidManifest.xml:2:1-64:12
+ADDED from /home/dinesh/Office/Android/TeamExpense/app/src/main/AndroidManifest.xml:2:1-65:12
 	xmlns:android
 		ADDED from /home/dinesh/Office/Android/TeamExpense/app/src/main/AndroidManifest.xml:2:11-69
 	package
@@ -51,7 +51,7 @@ ADDED from /home/dinesh/Office/Android/TeamExpense/app/src/main/AndroidManifest.
 	android:name
 		ADDED from /home/dinesh/Office/Android/TeamExpense/app/src/main/AndroidManifest.xml:16:30-80
 application
-ADDED from /home/dinesh/Office/Android/TeamExpense/app/src/main/AndroidManifest.xml:18:5-62:19
+ADDED from /home/dinesh/Office/Android/TeamExpense/app/src/main/AndroidManifest.xml:18:5-63:19
 MERGED from [com.android.support:support-v4:22.1.0] /home/dinesh/Office/Android/TeamExpense/app/build/intermediates/exploded-aar/com.android.support/support-v4/22.1.0/AndroidManifest.xml:22:5-20
 MERGED from [com.android.support:recyclerview-v7:22.1.0] /home/dinesh/Office/Android/TeamExpense/app/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/22.1.0/AndroidManifest.xml:22:5-26:19
 MERGED from [com.android.support:support-v4:22.1.0] /home/dinesh/Office/Android/TeamExpense/app/build/intermediates/exploded-aar/com.android.support/support-v4/22.1.0/AndroidManifest.xml:22:5-20
@@ -139,6 +139,10 @@ ADDED from /home/dinesh/Office/Android/TeamExpense/app/src/main/AndroidManifest.
 		ADDED from /home/dinesh/Office/Android/TeamExpense/app/src/main/AndroidManifest.xml:60:13-41
 	android:name
 		ADDED from /home/dinesh/Office/Android/TeamExpense/app/src/main/AndroidManifest.xml:59:13-69
+activity#com.example.TeamExpense.LoanDetailsActivity
+ADDED from /home/dinesh/Office/Android/TeamExpense/app/src/main/AndroidManifest.xml:62:9-80
+	android:name
+		ADDED from /home/dinesh/Office/Android/TeamExpense/app/src/main/AndroidManifest.xml:62:19-77
 activity#android.support.v7.widget.TestActivity
 ADDED from [com.android.support:recyclerview-v7:22.1.0] /home/dinesh/Office/Android/TeamExpense/app/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/22.1.0/AndroidManifest.xml:23:9-25:56
 	android:label

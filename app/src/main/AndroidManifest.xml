@@ -59,6 +59,7 @@
             android:name="com.example.TeamExpense.list.MainActivity"
             android:label="MainActivity" >
         </activity>
+        <activity android:name="com.example.TeamExpense.LoanDetailsActivity" />
     </application>
 
 </manifest>
