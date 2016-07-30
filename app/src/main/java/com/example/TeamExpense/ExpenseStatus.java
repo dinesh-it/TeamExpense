@@ -700,7 +700,7 @@ public class ExpenseStatus extends Activity {
     }
 
     public void onBackPressed() {
-        if(back_already_pressed){
+        if (back_already_pressed) {
             return;
         }
 
@@ -826,9 +826,6 @@ public class ExpenseStatus extends Activity {
             final TextView tx = (TextView) dialog.findViewById(R.id.splitup_details);
             final EditText amt = (EditText) dialog.findViewById(R.id.split_amount);
 
-            // Hide These views, these are only used for setle up option
-            AutoCompleteTextView tmp = (AutoCompleteTextView) dialog.findViewById(R.id.setle_on);
-            tmp.setVisibility(View.GONE);
             TableRow tmp1 = (TableRow) dialog.findViewById(R.id.setle_btn_row);
             tmp1.setVisibility(View.GONE);
 
@@ -886,7 +883,7 @@ public class ExpenseStatus extends Activity {
                             String txt = new String();
                             if (have_to_pay < 0) {
                                 txt = key + " have to get** :" + Expense.toCurrencyWithSymbol((have_to_pay * -1));
-                            } else if(have_to_pay >= 1){ // to avoid saying have to give 0.50 Rs
+                            } else if (have_to_pay >= 1) { // to avoid saying have to give 0.50 Rs
                                 txt = key + " have to give : " + Expense.toCurrencyWithSymbol(have_to_pay);
                             }
                             if (l_amt != 0) {
@@ -911,7 +908,7 @@ public class ExpenseStatus extends Activity {
             share_txt_btn.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     String share_details = tx.getText().toString();
-                    if(!share_details.equalsIgnoreCase("")) {
+                    if (!share_details.equalsIgnoreCase("")) {
                         String for_amt = amt.getText().toString();
 
                         share_details = "To pay: " + Expense.toCurrencyWithSymbol(Float.parseFloat(for_amt)) + "\n\n" + share_details;
@@ -1009,7 +1006,6 @@ public class ExpenseStatus extends Activity {
             final TextView tx = (TextView) dialog.findViewById(R.id.splitup_details);
             final EditText amt = (EditText) dialog.findViewById(R.id.split_amount);
             amt.setVisibility(View.INVISIBLE);
-            final AutoCompleteTextView setle_on = (AutoCompleteTextView) dialog.findViewById(R.id.setle_on);
             Button setle_btn = (Button) dialog.findViewById(R.id.setle_btn);
             Button setle_as_loan = (Button) dialog.findViewById(R.id.setle_as_loan_btn);
 
@@ -1033,7 +1029,6 @@ public class ExpenseStatus extends Activity {
 
             if (team_expense.length() < 2) {
                 tx.setText("Seems Expense not shared!");
-                setle_on.setVisibility(View.INVISIBLE);
                 TableRow tmp1 = (TableRow) dialog.findViewById(R.id.setle_btn_row);
                 tmp1.removeAllViews();
                 return true;
@@ -1103,106 +1098,107 @@ public class ExpenseStatus extends Activity {
                 tx.setText("Setle back as follows to tally team share:\n\n");
 
                 String[] items_list = db.getAllItems().clone();
-                ArrayAdapter<String> items_adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items_list);
-                setle_on.setAdapter(items_adapter);
 
                 setle_btn.setOnClickListener(new OnClickListener() {
                     public void onClick(View v) {
-                        String setle_on_val = setle_on.getText().toString();
-                        setle_on_val.trim();
-                        if (setle_on_val.length() > 0) {
-                            Iterator<?> settled_vals = settled.keys();
-                            while (settled_vals.hasNext()) {
-                                String key = (String) settled_vals.next();
-                                try {
-                                    Object value = settled.get(key);
-                                    String names[] = key.split(" -> ");
+                        Iterator<?> settled_vals = settled.keys();
+                        while (settled_vals.hasNext()) {
+                            String key = (String) settled_vals.next();
+                            try {
+                                Object value = settled.get(key);
+                                String names[] = key.split(" -> ");
 
-                                    List<Expense> exp1 = db.getFilteredExpenses(date_field.getText().toString(), names[1], setle_on_val, true);
-                                    Expense texp1 = exp1.get(0);
-                                    if (texp1 != null) {
-                                        texp1.amt = texp1.amt - Float.parseFloat(value.toString());
-                                        if (texp1.amt > 0) {
-                                            Expense texp0 = new Expense();
-                                            texp0.name = names[0];
-                                            texp0.spent_for = setle_on_val;
-                                            texp0.comment = "Setled by " + names[1];
-                                            texp0.date = Expense.toEpoch(date_field.getText().toString());
-                                            texp0.amt = Float.parseFloat(value.toString());
+                                String setle_on_val = db.getMaxExpSpent(date_field.getText().toString(), names[1], true);
+                                List<Expense> exp1 = db.getFilteredExpenses(date_field.getText().toString(), names[1], setle_on_val, true);
+                                Expense texp1 = exp1.get(0);
+                                if (texp1 != null) {
+                                    texp1.amt = texp1.amt - Float.parseFloat(value.toString());
+                                    if (texp1.amt > 0) {
+                                        Expense texp0 = new Expense();
+                                        texp0.name = names[0];
+                                        texp0.spent_for = setle_on_val;
+                                        texp0.comment = "Setled by " + names[1];
+                                        texp0.date = Expense.toEpoch(date_field.getText().toString());
+                                        texp0.amt = Float.parseFloat(value.toString());
 
-                                            db.updateExpense(texp1);
-                                            db.addExpense(texp0);
+                                        db.updateExpense(texp1);
+                                        db.addExpense(texp0);
 
-                                            Toast.makeText(ExpenseStatus.this, "Updated " + names[0] + " -> " + names[1] + " successfully", Toast.LENGTH_LONG).show();
-                                        } else {
-                                            Toast.makeText(ExpenseStatus.this, "Please do manually for " + key, Toast.LENGTH_LONG).show();
-                                        }
+                                        Toast.makeText(ExpenseStatus.this, "Updated " + names[0] + " -> " + names[1] + " successfully", Toast.LENGTH_LONG).show();
                                     } else {
                                         Toast.makeText(ExpenseStatus.this, "Please do manually for " + key, Toast.LENGTH_LONG).show();
                                     }
-                                    dialog.cancel();
-                                } catch (Exception e) {
-                                    e.printStackTrace();
+                                } else {
+                                    Toast.makeText(ExpenseStatus.this, "Please do manually for " + key, Toast.LENGTH_LONG).show();
                                 }
+                                dialog.cancel();
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
-                        } else {
-                            Toast.makeText(ExpenseStatus.this, "Setle on value is required", Toast.LENGTH_LONG).show();
                         }
                     }
                 });
 
-                //String[] items_list = db.getAllItems().clone();
-                //ArrayAdapter<String> items_adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items_list);
-                //amt.setAdapter(items_adapter);
+                // Auto tally as loan
                 setle_as_loan.setOnClickListener(new OnClickListener() {
                     public void onClick(View v) {
-                        String setle_on_val = setle_on.getText().toString();
-                        setle_on_val.trim();
-                        if (setle_on_val.length() > 0) {
-                            Iterator<?> settled_vals = settled.keys();
-                            while (settled_vals.hasNext()) {
-                                String key = (String) settled_vals.next();
-                                try {
-                                    Object value = settled.get(key);
-                                    String names[] = key.split(" -> ");
-
-                                    List<Expense> exp1 = db.getFilteredExpenses(date_field.getText().toString(), names[1], setle_on_val, true);
+                        Iterator<?> settled_vals = settled.keys();
+                        while (settled_vals.hasNext()) {
+                            String key = (String) settled_vals.next();
+                            try {
+                                Object value = settled.get(key);
+                                float actual_balance_amt = Float.parseFloat(value.toString());
+                                String names[] = key.split(" -> ");
+                                int iterations = 0;
+                                boolean tallied = false;
+                                while (!tallied && actual_balance_amt > 0 && iterations < 3) {
+                                    iterations++;
+                                    String max_exp_spent = db.getMaxExpSpent(date_field.getText().toString(), names[1], true);
+                                    List<Expense> exp1 = db.getFilteredExpenses(date_field.getText().toString(), names[1], max_exp_spent, true);
                                     Expense texp1 = exp1.get(0);
                                     if (texp1 != null) {
-                                        texp1.amt = texp1.amt - Float.parseFloat(value.toString());
-                                        if (texp1.amt > 0) {
-                                            Expense texp0 = new Expense();
-                                            texp0.name = names[0];
-                                            texp0.spent_for = setle_on_val;
-                                            texp0.comment = "Setled by " + names[1];
-                                            texp0.date = Expense.toEpoch(date_field.getText().toString());
-                                            texp0.amt = Float.parseFloat(value.toString());
-
-                                            Expense texp2 = new Expense();
-                                            texp2.name = names[1];
-                                            texp2.spent_for = names[0];
-                                            texp2.comment = "Setled for " + setle_on_val;
-                                            texp2.date = Expense.toEpoch(date_field.getText().toString());
-                                            texp2.amt = Float.parseFloat(value.toString());
-
-                                            db.updateExpense(texp1);
-                                            db.addExpense(texp0);
-                                            db.addExpense(texp2);
-
-                                            Toast.makeText(ExpenseStatus.this, "Updated " + names[0] + " -> " + names[1] + " successfully", Toast.LENGTH_LONG).show();
+                                        float amt_to_tally = texp1.amt - actual_balance_amt;
+                                        if (amt_to_tally < 0) {
+                                            amt_to_tally = texp1.amt;
+                                            texp1.amt = Float.parseFloat("0");
+                                            actual_balance_amt = actual_balance_amt - amt_to_tally;
+                                            tallied = false;
                                         } else {
-                                            Toast.makeText(ExpenseStatus.this, "Please do manually for " + key, Toast.LENGTH_LONG).show();
+                                            texp1.amt = amt_to_tally;
+                                            amt_to_tally = actual_balance_amt;
+                                            actual_balance_amt = 0;
+                                            tallied = true;
                                         }
+                                        Expense texp0 = new Expense();
+                                        texp0.name = names[0];
+                                        texp0.spent_for = max_exp_spent;
+                                        texp0.comment = "Setled by " + names[1] + " (" + iterations + ")";
+                                        texp0.date = Expense.toEpoch(date_field.getText().toString());
+                                        texp0.amt = amt_to_tally;
+
+                                        Expense texp2 = new Expense();
+                                        texp2.name = names[1];
+                                        texp2.spent_for = names[0];
+                                        texp2.comment = "Setled for " + max_exp_spent + " (" + iterations + ")";
+                                        texp2.date = Expense.toEpoch(date_field.getText().toString());
+                                        texp2.amt = amt_to_tally;
+
+                                        db.updateExpense(texp1);
+                                        db.addExpense(texp0);
+                                        db.addExpense(texp2);
                                     } else {
                                         Toast.makeText(ExpenseStatus.this, "Please do manually for " + key, Toast.LENGTH_LONG).show();
                                     }
-                                    dialog.cancel();
-                                } catch (Exception e) {
-                                    e.printStackTrace();
                                 }
+                                if (!tallied) {
+                                    Toast.makeText(ExpenseStatus.this, "Please do manually for " + key, Toast.LENGTH_LONG).show();
+                                } else {
+                                    Toast.makeText(ExpenseStatus.this, "Updated " + names[0] + " -> " + names[1] + " successfully (" + iterations + ")", Toast.LENGTH_LONG).show();
+                                }
+                                dialog.cancel();
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
-                        } else {
-                            Toast.makeText(ExpenseStatus.this, "Setle on value is required", Toast.LENGTH_LONG).show();
                         }
                     }
                 });
@@ -1219,7 +1215,6 @@ public class ExpenseStatus extends Activity {
                 }
             } else {
                 tx.setText("It seems already well shared. :)");
-                setle_on.setVisibility(View.INVISIBLE);
                 TableRow tmp1 = (TableRow) dialog.findViewById(R.id.setle_btn_row);
                 tmp1.removeAllViews();
             }
@@ -1440,7 +1435,7 @@ public class ExpenseStatus extends Activity {
                     col = new TextView(getApplicationContext());
                     col.setTextColor(Color.BLUE);
                     col.setText(key);
-                    col.setWidth(150);
+                    col.setWidth(200);
                     col.setMaxLines(4);
                     col.setSingleLine(false);
                     col.setPadding(10, 10, 10, 10);
@@ -1486,7 +1481,7 @@ public class ExpenseStatus extends Activity {
             col = new TextView(getApplicationContext());
             col.setTextColor(Color.RED);
             col.setText("Each One's Share:");
-            col.setWidth(150);
+            //col.setWidth(200);
             col.setMaxLines(4);
             col.setSingleLine(false);
             col.setPadding(10, 10, 10, 10);
@@ -1523,13 +1518,13 @@ public class ExpenseStatus extends Activity {
 
                 textView = new TextView(getApplicationContext());
                 textView.setTextColor(Color.BLACK);
-                textView.setText("For Self");
+                textView.setText("    For Self");
                 textView.setPadding(10, 10, 10, 10);
                 tableHead.addView(textView);
 
                 textView = new TextView(getApplicationContext());
                 textView.setTextColor(Color.BLACK);
-                textView.setText("For Team");
+                textView.setText("    For Team");
                 textView.setPadding(10, 10, 10, 10);
                 tableHead.addView(textView);
 
@@ -1537,7 +1532,7 @@ public class ExpenseStatus extends Activity {
 
             textView = new TextView(getApplicationContext());
             textView.setTextColor(Color.BLACK);
-            textView.setText("Total");
+            textView.setText("    Total");
             textView.setPadding(10, 10, 5, 10);
             tableHead.addView(textView);
 
@@ -1555,7 +1550,6 @@ public class ExpenseStatus extends Activity {
                     col = new TextView(getApplicationContext());
                     col.setTextColor(Color.BLUE);
                     col.setText(key);
-                    col.setWidth(120);
                     col.setMaxLines(4);
                     col.setSingleLine(false);
                     col.setPadding(1, 10, 5, 10);
@@ -1708,7 +1702,7 @@ public class ExpenseStatus extends Activity {
                     col = new TextView(getApplicationContext());
                     col.setTextColor(Color.BLUE);
                     col.setText(key);
-                    col.setWidth(160);
+                    //col.setWidth(160);
                     col.setMaxLines(4);
                     col.setSingleLine(false);
                     col.setPadding(10, 10, 10, 10);
@@ -1749,6 +1743,8 @@ public class ExpenseStatus extends Activity {
                     name = tv.getText().toString();
                 else if (ptable.equals("loan")) {
                     String str[] = tv.getText().toString().split(" gave to ");
+                    TextView tv2 = (TextView) tr.getChildAt(1);
+                    String balance_amt_str = tv2.getText().toString();
                     name = str[0];
                     spent_for = str[1];
                     //team_only = false;
@@ -1762,6 +1758,8 @@ public class ExpenseStatus extends Activity {
                     listIntent.putExtra("month_date", date);
                     listIntent.putExtra("loan_from", name);
                     listIntent.putExtra("loan_to", spent_for);
+                    listIntent.putExtra("loan_to", spent_for);
+                    listIntent.putExtra("balance_amt", balance_amt_str);
                     ExpenseStatus.this.startActivity(listIntent);
                     return;
                 }

@@ -336,7 +336,44 @@ public class DatabaseHandler extends SQLiteOpenHelper{
         }
         return expenseList;
     }
-    
+
+    public String getMaxExpSpent(String date_str, String for_name,boolean team_only){
+
+        String date[] = date_str.split("/");
+        long from_epoch = Expense.toEpoch("01/"+date[1]+"/"+date[2]);
+        long to_epoch = this.getEndOfMonthEpoch(date_str);
+
+        List<Expense> expenseList = new ArrayList<Expense>();
+        //
+        String selectQuery = " SELECT MAX(" + KEY_AMT + "), " + KEY_SPENT_FOR + "  FROM " + TABLE_EXPENSES +
+                " WHERE " + KEY_DATE + " BETWEEN " + from_epoch +" AND " + to_epoch;
+        selectQuery += " AND " + KEY_NAME + " = '" + for_name + "'";
+        if(team_only){
+            selectQuery += " AND " + KEY_SPENT_FOR + " NOT IN (";
+            String names[] = getAllNames(null);
+            for(int i=0;i< names.length;i++){
+                if(! (i == 0)){
+                    selectQuery += ", ";
+                }
+                names[i] = names[i].replace("'", "''");
+                selectQuery += "'" + names[i] + "'";
+            }
+            selectQuery += ")";
+        }
+
+        selectQuery += " LIMIT 1";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            return cursor.getString(1);
+        }
+
+        return "";
+    }
+
     public String[] getAllIndividuals(String month){
     	String subQuery = "SELECT DISTINCT " + KEY_NAME +" FROM " + TABLE_EXPENSES;
     	subQuery += " WHERE " + KEY_DATE + " > " + Expense.toEpoch(month) + " AND " + KEY_DATE + " < " + this.getEndOfMonthEpoch(month);

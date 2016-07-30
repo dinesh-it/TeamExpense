@@ -22,6 +22,12 @@ public class LoanReCyclerAdapter extends RecyclerView.Adapter<LoanReCyclerAdapte
     private ArrayList<JSONObject> loan_data_set;
     //Activity activity;
 
+    public interface OnItemClickListener {
+        void onItemClick(JSONObject clicked_exp);
+    }
+
+    private final OnItemClickListener list_click_listener;
+
     @Override
     public CustomViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View loan_view = LayoutInflater.from(parent.getContext()).inflate(R.layout.loan_detail_view,null);
@@ -32,9 +38,10 @@ public class LoanReCyclerAdapter extends RecyclerView.Adapter<LoanReCyclerAdapte
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public LoanReCyclerAdapter(ArrayList<JSONObject> myDataset) {
+    public LoanReCyclerAdapter(ArrayList<JSONObject> myDataset, OnItemClickListener listener) {
         Log.e("DD", "Loan Detail Adapter called");
         loan_data_set = myDataset;
+        list_click_listener = listener;
     }
 
     @Override
@@ -43,11 +50,13 @@ public class LoanReCyclerAdapter extends RecyclerView.Adapter<LoanReCyclerAdapte
         final JSONObject exp = loan_data_set.get(position);
 
         try {
-            //holder.date_day.setText((exp.get("date_day").toString()));
+            holder.bind(loan_data_set.get(position), list_click_listener);
+            holder.date_day.setText((exp.get("date_day").toString()));
             holder.date.setText(exp.get("date").toString());
             holder.date_month.setText((exp.get("date_month").toString()));
 
-            holder.loan_between.setText(exp.get("loan_between").toString());
+            holder.loan_from.setText(exp.get("loan_from").toString());
+            holder.loan_to.setText(exp.get("loan_to").toString());
             holder.comments.setText(exp.get("comments").toString());
 
             holder.amount.setText(exp.get("amount").toString());
@@ -67,12 +76,13 @@ public class LoanReCyclerAdapter extends RecyclerView.Adapter<LoanReCyclerAdapte
 
     @Override
     public int getItemCount() {
-        return Common.ExpenseSize;
+        return loan_data_set.size();
+        //return Common.ExpenseSize;
     }
 
     public class CustomViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView date, date_day, date_month, loan_between, comments, amount;
+        public TextView date, date_day, date_month, loan_from, loan_to, comments, amount;
 
         public CustomViewHolder(View view) {
             super(view);
@@ -81,10 +91,21 @@ public class LoanReCyclerAdapter extends RecyclerView.Adapter<LoanReCyclerAdapte
             date = (TextView) view.findViewById(R.id.expense_date);
             date_month = (TextView) view.findViewById(R.id.expense_date_month);
 
-            loan_between = (TextView) view.findViewById(R.id.loan_between_text);
+            loan_from = (TextView) view.findViewById(R.id.loan_from);
+            loan_to = (TextView) view.findViewById(R.id.loan_to);
             comments = (TextView) view.findViewById(R.id.loan_for_text);
 
             amount = (TextView) view.findViewById(R.id.loan_amount);
+        }
+
+        public void bind(final JSONObject item, final OnItemClickListener listener) {
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    listener.onItemClick(item);
+                    return true;
+                }
+            });
         }
     }
 }

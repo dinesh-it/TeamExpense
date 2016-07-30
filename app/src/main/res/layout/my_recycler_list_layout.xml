@@ -1,7 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RestaurantOffers"
     android:orientation="vertical">
 
     <TextView
@@ -10,12 +9,18 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:textStyle="bold"
+        android:background="#94c7be"
         android:textColor="#000000"
         android:textSize="15dp"
         android:hint="List View Title"
         android:text="Recycler List View"
         android:id="@+id/list_view_title_text"
         />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray" />
 
     <view
         android:id="@+id/recycler_list"

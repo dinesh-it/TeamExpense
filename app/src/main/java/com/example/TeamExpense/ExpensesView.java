@@ -484,7 +484,7 @@ public class ExpensesView extends Activity {
 		Toast.makeText(ExpensesView.this, msg, Toast.LENGTH_LONG).show();
 	}
 	
-	public void handleNextKey(final EditText from,final EditText to){
+	public static void handleNextKey(final EditText from,final EditText to){
     	from.setOnEditorActionListener(new TextView.OnEditorActionListener() {
     	    @Override
     	    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -673,13 +673,13 @@ public class ExpensesView extends Activity {
         textView.setBackgroundResource(drawable.list_selector_background);
         //textView.setText("Date " + sort_desc);
         if(date_sort == null){
-			textView.setText("Date " + sort);
+			textView.setText("Date " + sort + "    ");
 		}
 		else if(date_sort.equalsIgnoreCase("desc")){
-			textView.setText("Date " + sort_desc);
+			textView.setText("Date " + sort_desc + "    ");
 		}
 		else{
-			textView.setText("Date " + sort_asc);
+			textView.setText("Date " + sort_asc + "    ");
 		}
         textView.setPadding(10, 10, 10, 10);
         textView.setOnClickListener(new View.OnClickListener() {	
@@ -705,13 +705,13 @@ public class ExpensesView extends Activity {
         textView.setBackgroundResource(drawable.list_selector_background);
         //textView.setText("Paid By " + sort_asc);
         if(name_sort == null){
-			textView.setText("Paid By " + sort);
+			textView.setText("Paid By " + sort + "    ");
 		}
 		else if(name_sort.equalsIgnoreCase("desc")){
-			textView.setText("Paid By " + sort_desc);
+			textView.setText("Paid By " + sort_desc + "    ");
 		}
 		else{
-			textView.setText("Paid By " + sort_asc);
+			textView.setText("Paid By " + sort_asc + "    ");
 		}
         textView.setPadding(1, 10, 10, 10);
         textView.setOnClickListener(new View.OnClickListener() {	
@@ -737,13 +737,13 @@ public class ExpensesView extends Activity {
         textView.setBackgroundResource(drawable.list_selector_background);
         //textView.setText("Spent For" + sort_asc);
         if(item_sort == null){
-			textView.setText("Spent For " + sort);
+			textView.setText("Spent For " + sort + "    ");
 		}
 		else if(item_sort.equalsIgnoreCase("desc")){
-			textView.setText("Spent For " + sort_desc);
+			textView.setText("Spent For " + sort_desc + "    ");
 		}
 		else{
-			textView.setText("Spent For " + sort_asc);
+			textView.setText("Spent For " + sort_asc + "    ");
 		}
         textView.setPadding(1, 10, 10, 10);
         textView.setOnClickListener(new View.OnClickListener() {	
@@ -769,13 +769,13 @@ public class ExpensesView extends Activity {
         textView.setBackgroundResource(drawable.list_selector_background);
         //textView.setText("Amount " + sort_asc);
         if(amt_sort == null){
-			textView.setText("Amount " + sort);
+			textView.setText("Amount " + sort + "    ");
 		}
 		else if(amt_sort.equalsIgnoreCase("desc")){
-			textView.setText("Amount " + sort_desc);
+			textView.setText("Amount " + sort_desc + "    ");
 		}
 		else{
-			textView.setText("Amount " + sort_asc);
+			textView.setText("Amount " + sort_asc + "    ");
 		}
         textView.setPadding(1, 10, 10, 10);
         textView.setOnClickListener(new View.OnClickListener() {	
@@ -798,7 +798,7 @@ public class ExpensesView extends Activity {
         
         textView = new TextView(getApplicationContext());
         textView.setTextColor(Color.BLACK);
-        textView.setText("     Comments");
+        textView.setText("     Comments    ");
         textView.setPadding(1, 10, 10, 10);
         tableHead.addView(textView);
 
