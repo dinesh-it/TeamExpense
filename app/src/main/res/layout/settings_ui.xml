@@ -4,46 +4,42 @@
     android:layout_width="match_parent">
     <PreferenceCategory 
         android:title="General"
-        android:key="pref_key_general">
+        android:key="pref_key_general"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
         
     <EditTextPreference
         android:title="Name"
         android:summary="Set Your Name"
         android:inputType="textCapSentences"
-        android:key="pref_name"/>
+        android:key="pref_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
     
     <EditTextPreference
         android:title="Default Team"
         android:summary="Default Team name which will be filled by default."
         android:inputType="textCapSentences"
-        android:key="pref_def_team"/>
+        android:key="pref_def_team"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
         
     <CheckBoxPreference
         android:key="pref_self_only"
         android:title="Personal Expense Only"
         android:summary="Check this if you are using this app only for Personal Expenses."
-        android:defaultValue="false" />
+        android:defaultValue="false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
     <CheckBoxPreference
             android:key="pref_new_list"
             android:title="Use new UI list"
             android:summary="Check this if you want to use new UI for View Expense."
-            android:defaultValue="false" />
+            android:defaultValue="false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
     
     </PreferenceCategory>
-    
-    <PreferenceCategory 
-        android:title="Dropbox Sync"
-        android:key="pref_key_dropbox">
-        
-    <CheckBoxPreference
-        android:key="pref_auto_sync"
-        android:title="Auto Sync on Close"
-        android:summary="Whether to sync your data if any changes made when application exits."
-        android:defaultValue="true" />
-    
-    </PreferenceCategory>
-    
-    
-    
+
 </PreferenceScreen>

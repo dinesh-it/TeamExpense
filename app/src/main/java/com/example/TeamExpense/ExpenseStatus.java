@@ -1,8 +1,6 @@
 package com.example.TeamExpense;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
@@ -11,11 +9,6 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.dropbox.sync.android.DbxAccountManager;
-import com.dropbox.sync.android.DbxFile;
-import com.dropbox.sync.android.DbxFileSystem;
-import com.dropbox.sync.android.DbxPath;
-import com.example.TeamExpense.list.Common;
 import com.example.TeamExpense.list.MainActivity;
 import com.example.TeamExpense.list.MyRecyclerAdapter;
 import com.example.myapp1.R;
@@ -87,7 +80,6 @@ public class ExpenseStatus extends Activity {
     private String date_picker_for = "";
     private String non_team_users[];
 
-    private DbxAccountManager mDbxAcctMgr;
     private final String dbxAppKey = "qlqquc9asiaal4g";
     private final String dbxSecretKey = "j6z8u6cgjdan0pg";
 
@@ -169,7 +161,6 @@ public class ExpenseStatus extends Activity {
         date_picker.init(year, month, day, null);
         date_picker.removeAllViews();
         db = new DatabaseHandler(this);
-        mDbxAcctMgr = DbxAccountManager.getInstance(getApplicationContext(), dbxAppKey, dbxSecretKey);
         setAutoCompletes();
         showStatus();
         name.requestFocus();
@@ -549,98 +540,10 @@ public class ExpenseStatus extends Activity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_LINK_TO_DBX) {
-            if (resultCode == Activity.RESULT_OK) {
-                notify("Connection Success!");
-                if (mDbxAcctMgr.hasLinkedAccount()) {
-                    syncExpenseToDropbox();
-                }
-            } else {
-                notify("Authentication failed!");
-            }
-        } else if (requestCode == SETTINGS_SCREEN) {
+        if (requestCode == SETTINGS_SCREEN) {
             modifyUserPreferences();
         } else {
             super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
-    private void syncExpenseToDropbox() {
-        if (!DatabaseHandler.isModified) {
-            notify("You haven't modified anything!");
-            return;
-        }
-        notify("Team Expense: Preparing for Sync!");
-        boolean success = true;
-        File file;
-        try {
-            file = new File(backup_file_path);
-
-            // Create file if not exist
-            if (!(file.exists())) {
-                try {
-                    file.createNewFile();
-                } catch (Exception e) {
-                    success = false;
-                    notify("File Create Error: " + e.getMessage());
-                    return;
-                }
-            }
-
-            if (!success) {
-                return;
-            }
-
-            FileOutputStream f1 = new FileOutputStream(file, false); //True = Append to file, false = Overwrite
-            PrintStream p = new PrintStream(f1);
-            String c1, c2, c3, c4, c5;
-            c1 = "\"Date\"";
-            c2 = "\"Paid By\"";
-            c3 = "\"Spent For\"";
-            c4 = "\"Amount\"";
-            c5 = "\"Comments\"";
-            p.println(c1 + "," + c2 + "," + c3 + "," + c4 + "," + c5);
-            List<Expense> expenses = db.getAllExpenses();
-            for (Expense exp : expenses) {
-                c1 = "\"" + Expense.toDateString(exp.getDate()) + "\"";
-                c2 = "\"" + exp.getName() + "\"";
-                c3 = "\"" + exp.getSpentFor() + "\"";
-                c4 = "\"" + exp.getAmt() + "\"";
-                c5 = "\"" + exp.getComment() + "\"";
-                p.println(c1 + "," + c2 + "," + c3 + "," + c4 + "," + c5);
-            }
-            p.close();
-            f1.close();
-            DatabaseHandler.isModified = false;
-        } catch (Exception e) {
-            success = false;
-            notify("File Write Error:" + e.getMessage());
-            db.close();
-            return;
-        }
-
-        if (!success) {
-            return;
-        }
-
-        try {
-            DbxPath csv_path = new DbxPath("team_expense.csv");
-            DbxFileSystem dbxFs = DbxFileSystem.forAccount(mDbxAcctMgr.getLinkedAccount());
-            DbxFile csv_file;
-            if (!dbxFs.exists(csv_path)) {
-                csv_file = dbxFs.create(csv_path);
-            } else {
-                csv_file = dbxFs.open(csv_path);
-            }
-            csv_file.writeFromExistingFile(file, false);
-            csv_file.close();
-            if (!isNetworkAvailable()) {
-                notify("Team Expense: Will be synced once you are online.");
-            } else {
-                notify("Team Expense: Synced!");
-            }
-        } catch (Exception e) {
-            notify("Team Expense: Sync Failed! " + e.getMessage());
         }
     }
 
@@ -705,11 +608,6 @@ public class ExpenseStatus extends Activity {
         }
 
         back_already_pressed = true;
-        if (auto_sync && DatabaseHandler.isModified && mDbxAcctMgr.hasLinkedAccount()) {
-            notify("preparing auto sync");
-            syncExpenseToDropbox();
-            ExpenseStatus.this.finish();
-        }
         if (name.getText() + "" == "" && spent_for.getText() + "" == "" && amt.getText() + "" == "") {
             ExpenseStatus.this.finish();
         } else {
@@ -810,12 +708,6 @@ public class ExpenseStatus extends Activity {
             dialog.setCancelable(true);
             dialog.setCanceledOnTouchOutside(true);
             dialog.show();
-        } else if (id == R.id.action_sync_dropbox) {
-            if (mDbxAcctMgr.hasLinkedAccount()) {
-                syncExpenseToDropbox();
-            } else {
-                mDbxAcctMgr.startLink((Activity) this, REQUEST_LINK_TO_DBX);
-            }
         } else if (id == R.id.action_splitup) {
             final Dialog dialog = new Dialog(ExpenseStatus.this);
             dialog.setContentView(R.layout.splitup_screen);
@@ -1316,12 +1208,11 @@ public class ExpenseStatus extends Activity {
         item_status.setText("");
 
         status.setGravity(Gravity.CENTER);
+        viewBtn.setEnabled(true);
         if (expenses.size() < 1) {
-            viewBtn.setEnabled(false);
             status.setText("\n\nNo expense for month of date " + date_field.getText() + "\n" + "Monthly Status will appear here.");
             return;
         }
-        viewBtn.setEnabled(true);
         nameVice = new JSONObject();
         itemVice = new JSONObject();
         selfVice = new JSONObject();
