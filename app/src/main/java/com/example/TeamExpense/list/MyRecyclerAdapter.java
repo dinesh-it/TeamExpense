@@ -45,6 +45,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.Cu
         final JSONObject exp = mDataset.get(position);
 
         try {
+            holder.bind(mDataset.get(position), list_click_listener);
             holder.date_day.setText((exp.get("date_day").toString()));
             holder.date.setText(exp.get("date").toString());
             holder.date_month.setText((exp.get("date_month").toString()));

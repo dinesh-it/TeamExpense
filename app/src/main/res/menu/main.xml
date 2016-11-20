@@ -2,39 +2,12 @@
     xmlns:yourapp="http://schemas.android.com/apk/res-auto" >
     
     <item
-        android:id="@+id/action_help"
-        android:orderInCategory="100"
-        android:icon="@drawable/ic_action_help"
-        android:showAsAction="always"
-        android:title="Help"/>
-    
-    <item
-        android:id="@+id/action_about"
-        android:orderInCategory="100"
-        android:icon="@drawable/ic_action_about"
-        android:showAsAction="ifRoom"
-        android:title="About"/>
-    
-    <item
         android:id="@+id/action_splitup"
         android:icon="@drawable/ic_action_split"
         android:orderInCategory="100"
         android:showAsAction="always"
         android:title="Calculate Share"/>
-    
-    <item
-        android:id="@+id/action_settings"
-        android:icon="@drawable/ic_action_settings"
-        android:orderInCategory="100"
-        android:showAsAction="ifRoom"
-        android:title="Settings"/>
-    
-    <item
-        android:id="@+id/action_sync_dropbox"
-        android:icon="@drawable/ic_action_refresh"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="Sync with Dropbox"/>
+
     
     <item
         android:id="@+id/action_add_user"
@@ -57,14 +30,27 @@
     <item
         android:id="@+id/action_share_status_image"
         android:showAsAction="never"
-        android:title="Share Status as Image"
+        android:title="Share as Image"
         android:actionProviderClass=
             "android.widget.ShareActionProvider" />
 
     <item
         android:id="@+id/action_share_status_text"
-        android:showAsAction="never"
-        android:title="Share Status as Text"
-        android:actionProviderClass=
-            "android.widget.ShareActionProvider" />
+        android:icon="@drawable/abc_ic_menu_share_mtrl_alpha"
+        android:showAsAction="always"
+        android:title="Share Status as Text" />
+
+    <item
+        android:id="@+id/action_settings"
+        android:icon="@drawable/ic_action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:title="Settings"/>
+
+    <item
+        android:id="@+id/action_about"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_action_about"
+        android:showAsAction="ifRoom"
+        android:title="About"/>
 </menu>

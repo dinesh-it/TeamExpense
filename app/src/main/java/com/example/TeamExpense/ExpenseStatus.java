@@ -687,13 +687,6 @@ public class ExpenseStatus extends Activity {
             sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, get_status_as_string());
             sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Team Expense Details");
             startActivity(Intent.createChooser(sharingIntent, "Share via"));
-        } else if (id == R.id.action_help) {
-            Dialog dialog = new Dialog(ExpenseStatus.this);
-            dialog.setContentView(R.layout.help_screen);
-            dialog.setTitle("Help");
-            dialog.setCancelable(true);
-            dialog.setCanceledOnTouchOutside(true);
-            dialog.show();
         } else if (id == R.id.action_about) {
             Dialog dialog = new Dialog(ExpenseStatus.this);
             dialog.setContentView(R.layout.about_screen);
