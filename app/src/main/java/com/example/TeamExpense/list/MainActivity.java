@@ -1,159 +1,168 @@
 package com.example.TeamExpense.list;
 
 import android.app.Activity;
-import android.content.Context;
-import android.graphics.Color;
-import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
-
 
 import com.example.TeamExpense.DatabaseHandler;
 import com.example.TeamExpense.Expense;
-import com.example.TeamExpense.ExpenseStatus;
 import com.example.myapp1.R;
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 
 public class MainActivity extends Activity {
-    private RecyclerView mRecyclerView,mRecyclerView2,mRecyclerView3;
-    private MyRecyclerAdapter adapter,adapter2,adapter3;
-    private ArrayList<JSONObject> mDataset;
-
-
+    private RecyclerView recycler_view;
+    private MyRecyclerAdapter adapter;
+    private ArrayList<JSONObject> exp_data_set;
+    private TextView list_header;
+    private String date_from, date_to, name, spent_for, opt;
+    private boolean team_only = false;
+    private DatabaseHandler db;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.recyclerviewtest);
+        setContentView(R.layout.my_recycler_list_layout);
 
-        mRecyclerView = (RecyclerView)findViewById(R.id.recycleriew);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recycler_view = (RecyclerView) findViewById(R.id.recycler_list);
+        recycler_view.setLayoutManager(new LinearLayoutManager(this));
 
-        String date_from = "";
+        list_header = (TextView) findViewById(R.id.list_view_title_text);
+
+        db = new DatabaseHandler(this);
+
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             date_from = extras.getString("sel_date");
+            name = extras.getString("sel_name");
+            spent_for = extras.getString("sel_spent_for");
+            team_only = extras.getBoolean("team_only");
+            opt = extras.getString("show_option");
+        }
+        if (opt.equals("month")) {
+            load_data(db.getMonthExpenses(date_from, team_only));
+        } else if (opt.equals("filtered")) {
+            load_data(db.getFilteredExpenses(date_from, name, spent_for, team_only));
+        } else {
+            load_data(db.getAllExpenses());
         }
 
-        load_data(date_from);
-
-        adapter = new MyRecyclerAdapter(mDataset);
-        adapter.notifyDataSetChanged();
-        mRecyclerView.setAdapter(adapter);
-    }
-
-    public void load_data(String date_from){
-        DatabaseHandler db = new DatabaseHandler(getApplicationContext());
-        List<Expense> expenses = db.getMonthExpenses(date_from, true);
-
-        if(expenses.size() < 1){;
-            return;
-        };
-
-        String prev_date_str = "";
-        String comments = "";
-        float amt = 0;
-        int i = 0;
-
-        mDataset = new ArrayList(expenses.size());
-        JSONObject name_vise = new JSONObject();
-        for ( Expense exp : expenses){
-            try {
-                float n_amt = exp.getAmt();
-                String name = exp.getName();
-
-                if(n_amt == 0){
-                    continue;
-                }
-
-                if(!name_vise.isNull(name)){
-                    name_vise.put(name, Float.parseFloat(name_vise.get(name).toString()) + n_amt);
-                }
-                else{
-                    name_vise.put(name,n_amt);
-                }
-
-                String date_str = Expense.toDateString(exp.getDate());
-
-                amt = amt + n_amt;
-                String cmt = exp.getComment();
-                comments = comments + exp.getSpentFor();
-
-                if(cmt != null && !cmt.equalsIgnoreCase("")){
-                    comments += " (" + cmt + ")";
-                }
-
-                comments += ", ";
-
-                if(!prev_date_str.equalsIgnoreCase(date_str)) {
-                    prev_date_str = date_str;
-                    String date[] = date_str.split("/");
-                    String spent_details = "";
-
-                    Iterator<String> names = name_vise.keys();
-                    while (names.hasNext()) {
-                        String key = names.next();
-                        try {
-                            Object value = name_vise.get(key);
-                            spent_details += key + "(" + value.toString() + "), ";
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    JSONObject day_exp = new JSONObject();
-                    day_exp.put("spent_details",spent_details);
-                    day_exp.put("date_day", Expense.getWeekDay(date_str));
-                    day_exp.put("date_month", Expense.getStringMonth(date_str) + ", " + date[2]);
-                    day_exp.put("date", date[0]);
-                    day_exp.put("total", Expense.toCurrencyWithSymbol(amt));
-                    day_exp.put("comments", comments);
-
-                    //Log.d("DD", "" + date_str + "," + amt + "," + comments);
-
-                    mDataset.add(i, day_exp);
-
-                    i++;
-                    amt = 0;
-                    comments = "";
-                    name_vise = new JSONObject();
+        MyRecyclerAdapter.OnItemClickListener click_listener = new MyRecyclerAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(JSONObject exp) {
+                try {
+                    int id = Integer.parseInt(exp.getString("Id").toString());
+                    Expense.showEditDialog(id, MainActivity.this, db);
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
             }
-            catch(Exception ex){
+        };
+
+        list_header.setText("Expense detail list");
+
+        adapter = new MyRecyclerAdapter(exp_data_set, click_listener);
+        adapter.notifyDataSetChanged();
+        recycler_view.setAdapter(adapter);
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+    }
+
+    public void load_data(List<Expense> expenses) {
+
+        if (expenses.size() < 1) {
+            return;
+        }
+
+        int i = 0;
+
+        exp_data_set = new ArrayList(expenses.size());
+        for (Expense exp : expenses) {
+            try {
+
+                String date_str = Expense.toDateString(exp.getDate());
+                String cmt = exp.getComment();
+                String date[] = date_str.split("/");
+                float amt = exp.getAmt();
+
+                JSONObject day_exp = new JSONObject();
+
+                day_exp.put("Id", exp.getId());
+                day_exp.put("date_day", Expense.getWeekDay(date_str));
+                day_exp.put("date_month", Expense.getStringMonth(date_str) + ", " + date[2]);
+                day_exp.put("date", date[0]);
+
+                String exp_loan_from = exp.getName();
+
+                day_exp.put("loan_from", exp_loan_from);
+                day_exp.put("loan_to", exp.getSpentFor());
+                day_exp.put("comments", cmt);
+
+                day_exp.put("amount", Expense.toCurrencyWithSymbol(amt));
+
+                exp_data_set.add(i, day_exp);
+
+                i++;
+            } catch (Exception ex) {
                 ex.printStackTrace();
                 //Log.e("Data Formation",ex.getStackTrace() + "");
             }
         }
 
         Common.ExpenseSize = i;
+    }
+
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    public Action getIndexApiAction() {
+        Thing object = new Thing.Builder()
+                .setName("Main Page") // TODO: Define a title for the content shown.
+                // TODO: Make sure this auto-generated URL is correct.
+                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
+                .build();
+        return new Action.Builder(Action.TYPE_VIEW)
+                .setObject(object)
+                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
+                .build();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        AppIndex.AppIndexApi.start(client, getIndexApiAction());
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        AppIndex.AppIndexApi.end(client, getIndexApiAction());
+        client.disconnect();
     }
 }

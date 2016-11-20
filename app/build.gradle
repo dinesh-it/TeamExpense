@@ -30,4 +30,5 @@ dependencies {
 
     // For Charts
     //compile 'com.diogobernardino:williamchart:2.2'
+    compile 'com.google.android.gms:play-services-appindexing:8.4.0'
 }

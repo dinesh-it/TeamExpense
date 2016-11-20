@@ -110,7 +110,7 @@ public class DatabaseHandler extends SQLiteOpenHelper{
     public List<Expense> getAllExpenses() {
         List<Expense> expenseList = new ArrayList<Expense>();
         // Select All Query
-        String selectQuery = "SELECT  * FROM " + TABLE_EXPENSES + " ORDER BY " + KEY_DATE + " DESC, " + KEY_ID;
+        String selectQuery = "SELECT  * FROM " + TABLE_EXPENSES + " ORDER BY " + KEY_DATE + " DESC, " + KEY_ID + " DESC";
      
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -157,7 +157,7 @@ public class DatabaseHandler extends SQLiteOpenHelper{
         }
 
         selectQuery += " GROUP BY " + KEY_DATE;
-        selectQuery += " ORDER BY " + KEY_DATE + " DESC, " + KEY_ID;
+        selectQuery += " ORDER BY " + KEY_DATE + " DESC, " + KEY_ID + " DESC";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -188,7 +188,7 @@ public class DatabaseHandler extends SQLiteOpenHelper{
                 "(" + KEY_NAME + " = '" + loan_from + "' AND " + KEY_SPENT_FOR + " = '" + loan_to + "')" +
                 " OR " +
                 "(" + KEY_NAME + " = '" + loan_to + "' AND " + KEY_SPENT_FOR + " = '" + loan_from + "')" +
-                ") ORDER BY " + KEY_DATE + " DESC, " + KEY_ID + ';';
+                ") ORDER BY " + KEY_DATE + " DESC, " + KEY_ID + " DESC;";
 
         Log.d("DB QUERY", "getLoanDetails:" + selectQuery);
 
@@ -232,7 +232,7 @@ public class DatabaseHandler extends SQLiteOpenHelper{
         	selectQuery += ")";
         }
         
-        selectQuery += " ORDER BY " + KEY_DATE + " DESC, " + KEY_ID;
+        selectQuery += " ORDER BY " + KEY_DATE + " DESC, " + KEY_ID + " DESC";
      
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -321,7 +321,7 @@ public class DatabaseHandler extends SQLiteOpenHelper{
         }
         
         if(!sort_qr.equalsIgnoreCase("")){
-            selectQuery +=	" ORDER BY " + sort_qr;
+            selectQuery +=	" ORDER BY " + sort_qr + ", " + KEY_ID + " DESC";
     	}
      
         SQLiteDatabase db = this.getWritableDatabase();

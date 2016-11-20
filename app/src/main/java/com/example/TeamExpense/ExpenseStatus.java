@@ -102,8 +102,6 @@ public class ExpenseStatus extends Activity {
     public boolean new_list_ui = false;
 
     private RecyclerView mRecyclerView;
-    private MyRecyclerAdapter adapter;
-    private ArrayList<JSONObject> mDataset;
     private String backup_file_path;
     static String app_dir;
 
@@ -187,10 +185,6 @@ public class ExpenseStatus extends Activity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         //load_data_item_wise();
-
-        adapter = new MyRecyclerAdapter(mDataset);
-        adapter.notifyDataSetChanged();
-        mRecyclerView.setAdapter(adapter);
 
         // Getting a backup file path
         if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
@@ -585,7 +579,6 @@ public class ExpenseStatus extends Activity {
     private void showList(String date, String name, String spent_for, String opt, boolean team_only) {
         Intent listIntent;
         if (new_list_ui) {
-            //listIntent = new Intent(ExpenseStatus.this, ExpensesView2.class);
             listIntent = new Intent(ExpenseStatus.this, MainActivity.class);
         } else {
             listIntent = new Intent(ExpenseStatus.this, ExpensesView.class);

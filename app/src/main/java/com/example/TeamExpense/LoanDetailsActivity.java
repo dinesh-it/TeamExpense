@@ -134,8 +134,7 @@ public class LoanDetailsActivity extends Activity {
 
                 day_exp.put("amount", Expense.toCurrencyWithSymbol(amt));
 
-
-                day_exp.put("amt_balance", "Bal: " + Expense.toCurrency(bal_amt));
+                day_exp.put("amt_balance", Expense.toCurrency(bal_amt));
 
                 loan_data_set.add(i, day_exp);
 

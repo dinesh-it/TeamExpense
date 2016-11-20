@@ -18,8 +18,11 @@ ADDED from /home/dinesh/dd/projects/personal/Android/TeamExpense/app/src/main/An
 uses-sdk
 ADDED from /home/dinesh/dd/projects/personal/Android/TeamExpense/app/src/main/AndroidManifest.xml:7:5-9:41
 MERGED from [com.android.support:recyclerview-v7:22.1.0] /home/dinesh/dd/projects/personal/Android/TeamExpense/app/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/22.1.0/AndroidManifest.xml:20:5-43
-MERGED from [com.android.support:support-v4:22.1.0] /home/dinesh/dd/projects/personal/Android/TeamExpense/app/build/intermediates/exploded-aar/com.android.support/support-v4/22.1.0/AndroidManifest.xml:20:5-43
+MERGED from [com.android.support:support-v4:23.0.0] /home/dinesh/dd/projects/personal/Android/TeamExpense/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.0.0/AndroidManifest.xml:20:5-43
 MERGED from [com.android.support:appcompat-v7:22.1.0] /home/dinesh/dd/projects/personal/Android/TeamExpense/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.1.0/AndroidManifest.xml:20:5-43
+MERGED from [com.google.android.gms:play-services-appindexing:8.4.0] /home/dinesh/dd/projects/personal/Android/TeamExpense/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-appindexing/8.4.0/AndroidManifest.xml:18:5-42
+MERGED from [com.google.android.gms:play-services-base:8.4.0] /home/dinesh/dd/projects/personal/Android/TeamExpense/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/8.4.0/AndroidManifest.xml:18:5-42
+MERGED from [com.google.android.gms:play-services-basement:8.4.0] /home/dinesh/dd/projects/personal/Android/TeamExpense/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-basement/8.4.0/AndroidManifest.xml:18:5-42
 	android:targetSdkVersion
 		ADDED from /home/dinesh/dd/projects/personal/Android/TeamExpense/app/src/main/AndroidManifest.xml:9:9-38
 		INJECTED from /home/dinesh/dd/projects/personal/Android/TeamExpense/app/src/main/AndroidManifest.xml
@@ -51,8 +54,10 @@ ADDED from /home/dinesh/dd/projects/personal/Android/TeamExpense/app/src/main/An
 application
 ADDED from /home/dinesh/dd/projects/personal/Android/TeamExpense/app/src/main/AndroidManifest.xml:18:5-63:19
 MERGED from [com.android.support:recyclerview-v7:22.1.0] /home/dinesh/dd/projects/personal/Android/TeamExpense/app/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/22.1.0/AndroidManifest.xml:22:5-26:19
-MERGED from [com.android.support:support-v4:22.1.0] /home/dinesh/dd/projects/personal/Android/TeamExpense/app/build/intermediates/exploded-aar/com.android.support/support-v4/22.1.0/AndroidManifest.xml:22:5-20
+MERGED from [com.android.support:support-v4:23.0.0] /home/dinesh/dd/projects/personal/Android/TeamExpense/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.0.0/AndroidManifest.xml:22:5-20
 MERGED from [com.android.support:appcompat-v7:22.1.0] /home/dinesh/dd/projects/personal/Android/TeamExpense/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.1.0/AndroidManifest.xml:22:5-20
+MERGED from [com.google.android.gms:play-services-appindexing:8.4.0] /home/dinesh/dd/projects/personal/Android/TeamExpense/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-appindexing/8.4.0/AndroidManifest.xml:19:5-20
+MERGED from [com.google.android.gms:play-services-basement:8.4.0] /home/dinesh/dd/projects/personal/Android/TeamExpense/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-basement/8.4.0/AndroidManifest.xml:20:5-24:19
 	android:label
 		ADDED from /home/dinesh/dd/projects/personal/Android/TeamExpense/app/src/main/AndroidManifest.xml:21:9-45
 	android:allowBackup
@@ -123,22 +128,23 @@ ADDED from /home/dinesh/dd/projects/personal/Android/TeamExpense/app/src/main/An
 		ADDED from /home/dinesh/dd/projects/personal/Android/TeamExpense/app/src/main/AndroidManifest.xml:51:13-37
 	android:name
 		ADDED from /home/dinesh/dd/projects/personal/Android/TeamExpense/app/src/main/AndroidManifest.xml:49:13-67
-activity#com.example.TeamExpense.ExpensesView2
+activity#com.example.TeamExpense.list.MainActivity
 ADDED from /home/dinesh/dd/projects/personal/Android/TeamExpense/app/src/main/AndroidManifest.xml:54:9-57:20
 	android:label
-		ADDED from /home/dinesh/dd/projects/personal/Android/TeamExpense/app/src/main/AndroidManifest.xml:56:13-66
+		ADDED from /home/dinesh/dd/projects/personal/Android/TeamExpense/app/src/main/AndroidManifest.xml:56:13-41
 	android:name
-		ADDED from /home/dinesh/dd/projects/personal/Android/TeamExpense/app/src/main/AndroidManifest.xml:55:13-65
-activity#com.example.TeamExpense.list.MainActivity
-ADDED from /home/dinesh/dd/projects/personal/Android/TeamExpense/app/src/main/AndroidManifest.xml:58:9-61:20
-	android:label
-		ADDED from /home/dinesh/dd/projects/personal/Android/TeamExpense/app/src/main/AndroidManifest.xml:60:13-41
-	android:name
-		ADDED from /home/dinesh/dd/projects/personal/Android/TeamExpense/app/src/main/AndroidManifest.xml:59:13-69
+		ADDED from /home/dinesh/dd/projects/personal/Android/TeamExpense/app/src/main/AndroidManifest.xml:55:13-69
 activity#com.example.TeamExpense.LoanDetailsActivity
-ADDED from /home/dinesh/dd/projects/personal/Android/TeamExpense/app/src/main/AndroidManifest.xml:62:9-80
+ADDED from /home/dinesh/dd/projects/personal/Android/TeamExpense/app/src/main/AndroidManifest.xml:58:9-80
 	android:name
-		ADDED from /home/dinesh/dd/projects/personal/Android/TeamExpense/app/src/main/AndroidManifest.xml:62:19-77
+		ADDED from /home/dinesh/dd/projects/personal/Android/TeamExpense/app/src/main/AndroidManifest.xml:58:19-77
+meta-data#com.google.android.gms.version
+ADDED from /home/dinesh/dd/projects/personal/Android/TeamExpense/app/src/main/AndroidManifest.xml:60:9-62:69
+MERGED from [com.google.android.gms:play-services-basement:8.4.0] /home/dinesh/dd/projects/personal/Android/TeamExpense/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-basement/8.4.0/AndroidManifest.xml:21:9-23:69
+	android:value
+		ADDED from /home/dinesh/dd/projects/personal/Android/TeamExpense/app/src/main/AndroidManifest.xml:62:13-66
+	android:name
+		ADDED from /home/dinesh/dd/projects/personal/Android/TeamExpense/app/src/main/AndroidManifest.xml:61:13-58
 activity#android.support.v7.widget.TestActivity
 ADDED from [com.android.support:recyclerview-v7:22.1.0] /home/dinesh/dd/projects/personal/Android/TeamExpense/app/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/22.1.0/AndroidManifest.xml:23:9-25:56
 	android:label

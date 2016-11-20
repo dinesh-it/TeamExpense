@@ -68,7 +68,8 @@ public class LoanReCyclerAdapter extends RecyclerView.Adapter<LoanReCyclerAdapte
                 holder.amount.setTextColor(Color.RED);
             }
 
-            holder.amt_bal.setText(exp.get("amt_balance").toString());
+            holder.amt_bal.setText("Tot: " + exp.get("amt_balance").toString());
+            holder.joiner.setText("to");
         }
         catch(Exception e){
             e.printStackTrace();
@@ -84,7 +85,7 @@ public class LoanReCyclerAdapter extends RecyclerView.Adapter<LoanReCyclerAdapte
 
     public class CustomViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView date, date_day, date_month, loan_from, loan_to, comments, amount, amt_bal;
+        public TextView date, date_day, date_month, loan_from, loan_to, comments, amount, amt_bal, joiner;
 
         public CustomViewHolder(View view) {
             super(view);
@@ -99,6 +100,7 @@ public class LoanReCyclerAdapter extends RecyclerView.Adapter<LoanReCyclerAdapte
 
             amount = (TextView) view.findViewById(R.id.loan_amount);
             amt_bal = (TextView) view.findViewById(R.id.loan_amount_balance);
+            joiner = (TextView) view.findViewById(R.id.exp_joiner);
         }
 
         public void bind(final JSONObject item, final OnItemClickListener listener) {
