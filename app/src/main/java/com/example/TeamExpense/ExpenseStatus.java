@@ -1636,6 +1636,14 @@ public class ExpenseStatus extends Activity {
                     String str[] = tv.getText().toString().split(" gave to ");
                     TextView tv2 = (TextView) tr.getChildAt(1);
                     String balance_amt_str = tv2.getText().toString();
+                    String balance_in_float = "";
+                    try {
+                        balance_in_float = loanVice.get(tv.getText().toString()).toString();
+                        Log.d("DD Loan bal in float", balance_in_float);
+                    }
+                    catch(Exception e){
+                        e.printStackTrace();
+                    }
                     name = str[0];
                     spent_for = str[1];
                     //team_only = false;
@@ -1649,8 +1657,8 @@ public class ExpenseStatus extends Activity {
                     listIntent.putExtra("month_date", date);
                     listIntent.putExtra("loan_from", name);
                     listIntent.putExtra("loan_to", spent_for);
-                    listIntent.putExtra("loan_to", spent_for);
                     listIntent.putExtra("balance_amt", balance_amt_str);
+                    listIntent.putExtra("balance_amt_flt", balance_in_float);
                     ExpenseStatus.this.startActivity(listIntent);
                     return;
                 }

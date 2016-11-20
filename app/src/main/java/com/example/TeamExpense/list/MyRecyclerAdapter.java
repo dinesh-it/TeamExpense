@@ -31,7 +31,6 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.Cu
 
     // Provide a suitable constructor (depends on the kind of dataset)
     public MyRecyclerAdapter(ArrayList<JSONObject> myDataset) {
-        Log.e("Adapter called","~~~~~~~~~~~");
         mDataset = myDataset;
     }
 
@@ -41,7 +40,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.Cu
         final JSONObject exp = mDataset.get(position);
 
         try {
-            Log.d("DD BIND", exp.get("date").toString());
+            //Log.i("DD BIND", exp.get("date").toString());
             holder.spent_details.setText(exp.get("spent_details").toString());
             holder.date_month.setText((exp.get("date_month").toString()));
             holder.date_day.setText((exp.get("date_day").toString()));
@@ -52,19 +51,6 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.Cu
         catch(Exception e){
             Log.e("onBind", e.getMessage());
         }
-
-
-        //final int percent = (int)((amt / Common.max) * 100);
-        //holder.text1.setText(name);
-        //holder.text2.setText(amt + "");
-        //holder.progressBar.setProgress(percent);
-
-        /*holder.text2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // TODO;
-            }
-        });*/
     }
 
     @Override

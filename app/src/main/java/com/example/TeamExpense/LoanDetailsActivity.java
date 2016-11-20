@@ -56,28 +56,29 @@ public class LoanDetailsActivity extends Activity {
         String loan_to = "";
         String month_date = "";
         String balance_amt = "";
+        String bal_in_float = "";
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             loan_from = extras.getString("loan_from");
             loan_to = extras.getString("loan_to");
             month_date = extras.getString("month_date");
             balance_amt = extras.getString("balance_amt");
+            bal_in_float = extras.getString("balance_amt_flt");
         }
+
+        float bal_loan = Float.parseFloat(bal_in_float);
 
         String title_text = "Loan's From " + loan_from + " to " + loan_to;
         title_text += "\nBalance = " + balance_amt;
         list_header.setText(title_text);
 
-        load_loan_data(month_date, loan_from, loan_to);
+        load_loan_data(month_date, loan_from, loan_to, bal_loan);
 
         LoanReCyclerAdapter.OnItemClickListener click_listener = new LoanReCyclerAdapter.OnItemClickListener() {
             @Override public void onItemClick(JSONObject exp) {
-                String str = "";
                 try {
-                    str = exp.get("Id") + " " + exp.getString("loan_from") + " to " + exp.getString("loan_to").toString();
                     int id = Integer.parseInt(exp.getString("Id").toString());
                     Expense.showEditDialog(id,LoanDetailsActivity.this,db);
-                    // TODO: Refresh list
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -89,7 +90,7 @@ public class LoanDetailsActivity extends Activity {
         recycler_view.setAdapter(loan_adapter);
     }
 
-    public void load_loan_data(String month_date, String loan_from,String loan_to){
+    public void load_loan_data(String month_date, String loan_from,String loan_to, float bal_amt){
         DatabaseHandler db = new DatabaseHandler(getApplicationContext());
         List<Expense> expenses = db.getLoanDetails(month_date, loan_from, loan_to);
 
@@ -98,6 +99,7 @@ public class LoanDetailsActivity extends Activity {
         }
 
         int i = 0;
+        float prev_amt = 0;
 
         loan_data_set = new ArrayList(expenses.size());
         for ( Expense exp : expenses){
@@ -115,11 +117,15 @@ public class LoanDetailsActivity extends Activity {
                 day_exp.put("date", date[0]);
 
                 String exp_loan_from = exp.getName();
+                bal_amt += prev_amt;
 
                 if(exp_loan_from.equalsIgnoreCase(loan_from)) {
                     day_exp.put("amt_color", "green");
+                    prev_amt = amt * -1;  //to subtract
+
                 }else{
                     day_exp.put("amt_color", "red");
+                    prev_amt = amt;
                 }
 
                 day_exp.put("loan_from", exp_loan_from);
@@ -127,6 +133,9 @@ public class LoanDetailsActivity extends Activity {
                 day_exp.put("comments", cmt);
 
                 day_exp.put("amount", Expense.toCurrencyWithSymbol(amt));
+
+
+                day_exp.put("amt_balance", "Bal: " + Expense.toCurrency(bal_amt));
 
                 loan_data_set.add(i, day_exp);
 

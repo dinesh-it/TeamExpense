@@ -130,8 +130,16 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="Rs 200.00"
-                android:textColor="#015029"
+                android:textColor="#00733a"
                 android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/loan_amount_balance"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="200.00"
+                android:textSize="10sp" />
 
         </LinearLayout>
 

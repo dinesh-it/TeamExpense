@@ -138,7 +138,7 @@ public class MainActivity extends Activity {
                     day_exp.put("total", Expense.toCurrencyWithSymbol(amt));
                     day_exp.put("comments", comments);
 
-                    Log.d("DD", "" + date_str + "," + amt + "," + comments);
+                    //Log.d("DD", "" + date_str + "," + amt + "," + comments);
 
                     mDataset.add(i, day_exp);
 

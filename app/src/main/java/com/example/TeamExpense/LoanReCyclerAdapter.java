@@ -39,7 +39,7 @@ public class LoanReCyclerAdapter extends RecyclerView.Adapter<LoanReCyclerAdapte
 
     // Provide a suitable constructor (depends on the kind of dataset)
     public LoanReCyclerAdapter(ArrayList<JSONObject> myDataset, OnItemClickListener listener) {
-        Log.e("DD", "Loan Detail Adapter called");
+        Log.i("DD", "Loan Detail Adapter called");
         loan_data_set = myDataset;
         list_click_listener = listener;
     }
@@ -62,11 +62,13 @@ public class LoanReCyclerAdapter extends RecyclerView.Adapter<LoanReCyclerAdapte
             holder.amount.setText(exp.get("amount").toString());
             String color = exp.get("amt_color").toString();
             if(color.equalsIgnoreCase("green")) {
-                holder.amount.setTextColor(Color.parseColor("#015029"));
+                holder.amount.setTextColor(Color.parseColor("#00733a"));
             }
             else{
                 holder.amount.setTextColor(Color.RED);
             }
+
+            holder.amt_bal.setText(exp.get("amt_balance").toString());
         }
         catch(Exception e){
             e.printStackTrace();
@@ -82,7 +84,7 @@ public class LoanReCyclerAdapter extends RecyclerView.Adapter<LoanReCyclerAdapte
 
     public class CustomViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView date, date_day, date_month, loan_from, loan_to, comments, amount;
+        public TextView date, date_day, date_month, loan_from, loan_to, comments, amount, amt_bal;
 
         public CustomViewHolder(View view) {
             super(view);
@@ -96,6 +98,7 @@ public class LoanReCyclerAdapter extends RecyclerView.Adapter<LoanReCyclerAdapte
             comments = (TextView) view.findViewById(R.id.loan_for_text);
 
             amount = (TextView) view.findViewById(R.id.loan_amount);
+            amt_bal = (TextView) view.findViewById(R.id.loan_amount_balance);
         }
 
         public void bind(final JSONObject item, final OnItemClickListener listener) {
