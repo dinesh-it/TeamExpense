@@ -102,14 +102,37 @@
                     android:textSize="14sp" />
             </TableRow>
 
-            <TextView
-                android:id="@+id/loan_for_text"
+            <TableRow
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:maxLines="2"
                 android:gravity="center"
                 android:text="rice, oil, gobi"
+                android:textSize="10sp"
+                android:weightSum="4">
+
+            <TextView
+                android:id="@+id/loan_for_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="2"
+                android:gravity="center"
+                android:text="rice, oil, gobi"
+                android:layout_weight="3.5"
                 android:textSize="10sp" />
+
+                <TextView
+                    android:id="@+id/pmt_mode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:gravity="right"
+                    android:layout_weight="0.5"
+                    android:text="ONLINE"
+                    android:textStyle="bold"
+                    android:textSize="9sp" />
+
+            </TableRow>
 
         </LinearLayout>
 

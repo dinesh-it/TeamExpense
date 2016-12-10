@@ -1,13 +1,16 @@
 package com.example.TeamExpense;
 
 import android.app.AlertDialog;
+import android.app.Application;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.myapp1.R;
@@ -20,12 +23,12 @@ import java.util.Date;
 import java.util.Locale;
 
 public class Expense {
-    int id;
-    long date;
-    String name;
-    String spent_for;
-    String comment;
-    Float amt;
+    private int id;
+    private long date;
+    private String name, spent_for, comment;
+    private Float amt;
+    private String payment_mode = "CASH";
+    private String group = "OTHER";
     private static String Month[] = {"Jan", "Feb", "Mar", "April", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"};
     private static String Day[] = {"Sun","Mon","Tue","Wed", "Thu","Fri","Sat"};
 
@@ -33,22 +36,44 @@ public class Expense {
 
     }
 
-    public Expense(int tid, String tname, long tdate, String tspent_for, String tcomment, Float tamt) {
+    public Expense(int tid, String tname, long tdate, String tspent_for, String tcomment, Float tamt, String group, String mode) {
         this.id = tid;
         this.date = tdate;
         this.name = tname;
         this.spent_for = tspent_for;
         this.comment = tcomment;
         this.amt = tamt;
+
+        if(mode == null || mode.equalsIgnoreCase("")){
+            mode = "CASH";
+        }
+
+        this.payment_mode = mode.toUpperCase();
+
+        if(group == null || group.equalsIgnoreCase("")){
+            group = "OTHER";
+        }
+        this.group = group.toUpperCase();
     }
 
-    public Expense(String tname, long tdate, String tspent_for, String tcomment, Float tamt) {
+    public Expense(String tname, long tdate, String tspent_for, String tcomment, Float tamt, String group, String mode) {
         this.id = 0;
         this.date = tdate;
         this.name = tname;
         this.spent_for = tspent_for;
         this.comment = tcomment;
         this.amt = tamt;
+
+        if(mode == null || mode.equalsIgnoreCase("")){
+            mode = "CASH";
+        }
+
+        this.payment_mode = mode.toUpperCase();
+
+        if(group == null || group.equalsIgnoreCase("")){
+            group = "OTHER";
+        }
+        this.group = group.toUpperCase();
     }
 
     public String getName() {
@@ -74,6 +99,15 @@ public class Expense {
     public Float getAmt() {
         return this.amt;
     }
+
+    public Float setAmt(float amt) {
+        this.amt = amt;
+        return this.amt;
+    }
+
+    public String getPaymentMode() { return this.payment_mode.toUpperCase(); }
+
+    public String getGroup() { return this.group.toUpperCase(); }
 
     public static long toEpoch(String str_date) {
         long epoch_date;
@@ -126,10 +160,12 @@ public class Expense {
         dialog.setCanceledOnTouchOutside(true);
         final EditText desc, amt, date_field;
         final AutoCompleteTextView spent_for, name;
+        final Spinner pmt_mode_s, group_name;
         Button save_btn, cancel_btn, del_btn;
         date_field = (EditText)dialog.findViewById(R.id.editText1);
         date_field.setSingleLine(true);
         date_field.setFocusable(false);
+
         name = (AutoCompleteTextView)dialog.findViewById(R.id.autoCompleteTextView1);
         name.setSingleLine(true);
         name.setFocusable(false);
@@ -145,6 +181,10 @@ public class Expense {
         amt.setSingleLine(true);
         amt.setFocusable(false);
         ExpensesView.handleNextKey(desc, amt);
+
+        pmt_mode_s = (Spinner) dialog.findViewById(R.id.pmt_mode);
+        group_name = (Spinner) dialog.findViewById(R.id.group_name);
+
         ExpensesView.handleNextKey(amt, null);
         save_btn = (Button)dialog.findViewById(R.id.save_btn);
         save_btn.setText("Edit");
@@ -156,6 +196,8 @@ public class Expense {
         spent_for.setText(e.getSpentFor());
         desc.setText(e.getComment());
         amt.setText(e.getAmt() + "");
+
+        Expense.setAutoCompletes(name,spent_for,group_name,db, context);
 
         // Save button action
         save_btn.setOnClickListener(new View.OnClickListener(){
@@ -174,12 +216,14 @@ public class Expense {
                     Toast.makeText(context, "ERROR: Incomplete form", Toast.LENGTH_LONG).show();
                 }
                 else {
+                    String pmt_mode = String.valueOf(pmt_mode_s.getSelectedItem());
+                    String pmt_group = String.valueOf(group_name.getSelectedItem());
                     Expense exp = new Expense(exp_id,
                             name.getText().toString(),
                             Expense.toEpoch(date_field.getText().toString()),
                             spent_for.getText().toString(),
                             desc.getText().toString(),
-                            Float.parseFloat(""+amt.getText()));
+                            Float.parseFloat(""+amt.getText()),pmt_group,pmt_mode);
                     if(db.updateExpense(exp)){
 
                         Toast.makeText(context, "Updated Successfuly!", Toast.LENGTH_LONG).show();
@@ -210,7 +254,6 @@ public class Expense {
                         .setPositiveButton("Delete",new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog1,int id) {
                                 if(db.deleteExpense(exp_id)){
-                                    // TODO: Remove item from adapter
                                     Toast.makeText(context, "Deleted Successfuly!", Toast.LENGTH_LONG).show();
                                     dialog.cancel();
                                 }
@@ -228,6 +271,25 @@ public class Expense {
         });
 
         dialog.show();
+    }
+
+    public static void setAutoCompletes(AutoCompleteTextView name, AutoCompleteTextView spent_for, Spinner group_name, DatabaseHandler db,Context c) {
+        String[] name_list = db.getAllNames(null).clone();
+        ArrayAdapter<String> names_adapter = new ArrayAdapter<String>(c, android.R.layout.simple_list_item_1, name_list);
+        name.setAdapter(names_adapter);
+
+        String[] items_list = db.getAllItems().clone();
+        ArrayAdapter<String> items_adapter = new ArrayAdapter<String>(c, android.R.layout.simple_list_item_1, items_list);
+        spent_for.setAdapter(items_adapter);
+
+        String[] groups = db.getAllGroups();
+        if(groups.length == 0 || groups.length < 2){
+            groups = new String[2];
+            groups[0] = "ROOM";
+            groups[1] = "SELF";
+        }
+        ArrayAdapter<String> groups_adapter = new ArrayAdapter<String>(c, android.R.layout.simple_list_item_1, groups);
+        group_name.setAdapter(groups_adapter);
     }
 
 }

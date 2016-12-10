@@ -13,108 +13,8 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:text="Add New Expense:" />
-     <TableRow
-        android:id="@+id/date_row"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
 
-    <EditText
-        android:id="@+id/editText1"
-        android:layout_width="120dp"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="Date"
-        android:inputType="date" />
-
-    <AutoCompleteTextView
-        android:id="@+id/team_name"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textCapSentences"
-        android:ems="10"
-        android:hint="Team eg: Room" />
-
-    </TableRow>
-
-    <TableRow
-        android:id="@+id/name_row"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-    <AutoCompleteTextView
-        android:id="@+id/autoCompleteTextView1"
-        android:layout_width="0dp"
-        android:layout_weight="0.7"
-        android:layout_height="wrap_content"
-        android:inputType="textCapSentences"
-        android:ems="10"
-        android:hint="Paid By. eg: Dinesh" />
-
-    <Button
-        android:id="@+id/me_btn"
-        style="@style/MySmallButton"
-        android:background="@drawable/purple_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="35dp"
-        android:text="Me" />
-    </TableRow>
-
-   <TableRow
-        android:id="@+id/spent_for_row"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-    <AutoCompleteTextView
-        android:id="@+id/autoCompleteTextView2"
-        android:layout_width="0dp"
-        android:layout_weight="0.7"
-        android:layout_height="wrap_content"
-        android:inputType="textCapSentences"
-        android:ems="10"
-        android:hint="Spent For eg: Food" />
-
-    <Button
-        android:id="@+id/self_btn"
-        style="@style/MySmallButton"
-        android:background="@drawable/purple_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="35dp"
-        android:text="Self" />
-
-         </TableRow>
-
-    <EditText
-        android:id="@+id/editText4"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textCapSentences"
-        android:ems="10"
-        android:hint="Comments" />
-
-   <TableRow
-        android:id="@+id/amount_row"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-    <EditText
-        android:id="@+id/editText5"
-        android:layout_width="0dp"
-        android:layout_weight="0.7"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="Amount. eg: 35.00"
-        android:inputType="numberDecimal" />
-
-    <Button
-        android:id="@+id/btn_show_calc"
-        style="@style/MySmallButton"
-        android:background="@drawable/purple_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="35dp"
-        android:text="Calc" />
-    </TableRow>
-
-
+        <include layout="@layout/modify_expense"/>
 
     <TableRow
         android:id="@+id/tableRow5"
@@ -245,6 +145,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
     </TableLayout>
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Medium Text"
+            android:gravity="center"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <TableLayout
+            android:id="@+id/mode_details_table"
+            android:background="#ffffff"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+        </TableLayout>
 
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"

@@ -9,6 +9,19 @@
         <item>TEAM</item>
         <item>INDIVIDUAL</item>
     </string-array>
+
+    <string-array name="group_types">
+        <item>ROOM</item>
+        <item>SELF</item>
+    </string-array>
+
+    <string-array name="pmt_modes">
+        <item>CASH</item>
+        <item>CC</item>
+        <item>DC</item>
+        <item>ONLINE</item>
+    </string-array>
+
     <string name="title_activity_expenses_view2">ExpensesView2</string>
 
 </resources>

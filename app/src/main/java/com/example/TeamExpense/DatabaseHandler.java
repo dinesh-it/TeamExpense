@@ -14,7 +14,7 @@ import android.util.Log;
 public class DatabaseHandler extends SQLiteOpenHelper{
 	// All Static variables
     // Database Version
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
  
     // Database Name
     private static final String DATABASE_NAME = "ddExpenseManager";
@@ -27,10 +27,13 @@ public class DatabaseHandler extends SQLiteOpenHelper{
     // Expense Table Columns names
     private static final String KEY_ID = "id";
     private static final String KEY_NAME = "name";
-    private static final String KEY_DATE = "date";
+    private static final String KEY_DATE = "exp_date";
     private static final String KEY_SPENT_FOR = "spentfor";
     private static final String KEY_COMMENT = "comment";
     private static final String KEY_AMT = "spentamt";
+    private static final String KEY_PMODE = "payment_mode";
+    private static final String KEY_CREATED_TIME = "created_time";
+    private static final String KEY_GROUP = "payment_group";
  
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -40,7 +43,9 @@ public class DatabaseHandler extends SQLiteOpenHelper{
     	String CREATE_EXPENSES_TABLE = "CREATE TABLE " + TABLE_EXPENSES + "("
                 + KEY_ID + " INTEGER PRIMARY KEY," + KEY_NAME + " TEXT,"
                 + KEY_DATE + " INTEGER," + KEY_SPENT_FOR + " TEXT,"
-                + KEY_COMMENT + " TEXT," + KEY_AMT + " DECIMAL(5,2)" + ")";
+                + KEY_COMMENT + " TEXT," + KEY_AMT + " DECIMAL(5,2),"
+                + KEY_CREATED_TIME + " INTEGER, "+ KEY_PMODE + " TEXT, "
+                + KEY_GROUP + " TEXT)";
         db.execSQL(CREATE_EXPENSES_TABLE);
     }
 
@@ -57,6 +62,9 @@ public class DatabaseHandler extends SQLiteOpenHelper{
     	values.put(KEY_SPENT_FOR, exp.getSpentFor());
     	values.put(KEY_COMMENT, exp.getComment());
     	values.put(KEY_AMT, exp.getAmt());
+        values.put(KEY_CREATED_TIME, System.currentTimeMillis());
+        values.put(KEY_PMODE, exp.getPaymentMode());
+        values.put(KEY_GROUP, exp.getGroup());
     	db.insert(TABLE_EXPENSES, null, values);
         db.close();
         isModified = true;
@@ -71,6 +79,9 @@ public class DatabaseHandler extends SQLiteOpenHelper{
         	values.put(KEY_SPENT_FOR, exp.getSpentFor());
         	values.put(KEY_COMMENT, exp.getComment());
         	values.put(KEY_AMT, exp.getAmt());
+            values.put(KEY_CREATED_TIME, System.currentTimeMillis());
+            values.put(KEY_PMODE, exp.getPaymentMode());
+            values.put(KEY_GROUP, exp.getGroup());
         	db.update(TABLE_EXPENSES, values, KEY_ID + " = ?", new String[] { String.valueOf(exp.getId()) });
             db.close();
             isModified = true;
@@ -94,7 +105,7 @@ public class DatabaseHandler extends SQLiteOpenHelper{
         Cursor cursor = db.rawQuery(selectQuery, null);
         if (cursor != null)
             cursor.moveToFirst();  
-        Expense exp = new Expense(cursor.getString(1), Long.parseLong(cursor.getString(2)),cursor.getString(3),cursor.getString(4),Float.parseFloat(cursor.getString(5)));
+        Expense exp = new Expense(cursor.getString(1), Long.parseLong(cursor.getString(2)),cursor.getString(3),cursor.getString(4),Float.parseFloat(cursor.getString(5)),cursor.getString(8),cursor.getString(7));
         return exp;
     }
     
@@ -118,7 +129,7 @@ public class DatabaseHandler extends SQLiteOpenHelper{
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
-                Expense exp = new Expense(Integer.parseInt(cursor.getString(0)), cursor.getString(1), Long.parseLong(cursor.getString(2)),cursor.getString(3),cursor.getString(4),Float.parseFloat(cursor.getString(5)));
+                Expense exp = new Expense(Integer.parseInt(cursor.getString(0)), cursor.getString(1), Long.parseLong(cursor.getString(2)),cursor.getString(3),cursor.getString(4),Float.parseFloat(cursor.getString(5)),cursor.getString(8),cursor.getString(7));
                 expenseList.add(exp);
             } while (cursor.moveToNext());
         }
@@ -132,7 +143,7 @@ public class DatabaseHandler extends SQLiteOpenHelper{
     	return this.getMonthExpenses(from_date, Expense.toDateString(to_date), team_only);
     }
 
-    public List<Expense> getMonthExpensesByDate(String from_date, boolean team_only){
+    /*public List<Expense> getMonthExpensesByDate(String from_date, boolean team_only){
         String date[] = from_date.split("/");
         from_date = "01/"+date[1]+"/"+date[2];
         long to_date = this.getEndOfMonthEpoch(from_date);
@@ -173,7 +184,7 @@ public class DatabaseHandler extends SQLiteOpenHelper{
             }
 
         return expenseList;
-    }
+    }*/
 
     public List<Expense> getLoanDetails(String month_of_date, String loan_from, String loan_to){
         String date[] = month_of_date.split("/");
@@ -198,13 +209,18 @@ public class DatabaseHandler extends SQLiteOpenHelper{
         // looping through all rows and adding to list
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                Expense exp = new Expense();
-                exp.date = cursor.getLong(cursor.getColumnIndex(KEY_DATE));
-                exp.amt = cursor.getFloat(cursor.getColumnIndex(KEY_AMT));
-                exp.comment = cursor.getString(cursor.getColumnIndex(KEY_COMMENT));
-                exp.id = cursor.getInt(cursor.getColumnIndex(KEY_ID));
-                exp.name = cursor.getString(cursor.getColumnIndex(KEY_NAME));
-                exp.spent_for = cursor.getString(cursor.getColumnIndex(KEY_SPENT_FOR));
+                String comment, name, spent_for, pmt_mode, group;
+                long exp_date = cursor.getLong(cursor.getColumnIndex(KEY_DATE));
+                int id = cursor.getInt(cursor.getColumnIndex(KEY_ID));
+                float amt = cursor.getFloat(cursor.getColumnIndex(KEY_AMT));;
+                comment = cursor.getString(cursor.getColumnIndex(KEY_COMMENT));
+                name = cursor.getString(cursor.getColumnIndex(KEY_NAME));
+                spent_for = cursor.getString(cursor.getColumnIndex(KEY_SPENT_FOR));
+                pmt_mode = cursor.getString(cursor.getColumnIndex(KEY_PMODE));
+                group = cursor.getString(cursor.getColumnIndex(KEY_GROUP));
+
+                Expense exp = new Expense(id,name,exp_date,spent_for,comment,amt,group,pmt_mode);
+
                 expenseList.add(exp);
             } while (cursor.moveToNext());
         }
@@ -240,7 +256,7 @@ public class DatabaseHandler extends SQLiteOpenHelper{
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
-                Expense exp = new Expense(Integer.parseInt(cursor.getString(0)), cursor.getString(1), Long.parseLong(cursor.getString(2)),cursor.getString(3),cursor.getString(4),Float.parseFloat(cursor.getString(5)));
+                Expense exp = new Expense(Integer.parseInt(cursor.getString(0)), cursor.getString(1), Long.parseLong(cursor.getString(2)),cursor.getString(3),cursor.getString(4),Float.parseFloat(cursor.getString(5)),cursor.getString(8),cursor.getString(7));
                 expenseList.add(exp);
             } while (cursor.moveToNext());
         }
@@ -330,7 +346,7 @@ public class DatabaseHandler extends SQLiteOpenHelper{
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
-                Expense exp = new Expense(Integer.parseInt(cursor.getString(0)), cursor.getString(1), Long.parseLong(cursor.getString(2)),cursor.getString(3),cursor.getString(4),Float.parseFloat(cursor.getString(5)));
+                Expense exp = new Expense(Integer.parseInt(cursor.getString(0)), cursor.getString(1), Long.parseLong(cursor.getString(2)),cursor.getString(3),cursor.getString(4),Float.parseFloat(cursor.getString(5)),cursor.getString(8),cursor.getString(7));
                 expenseList.add(exp);
             } while (cursor.moveToNext());
         }
@@ -427,4 +443,20 @@ public class DatabaseHandler extends SQLiteOpenHelper{
         }
         return items;
     }
+
+    public String[] getAllGroups() {
+        String selectQuery = "SELECT DISTINCT " + KEY_GROUP +" FROM " + TABLE_EXPENSES + " WHERE " + KEY_GROUP + " IS NOT NULL";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        String items[] = new String[cursor.getCount()];
+        if (cursor.moveToFirst()) {
+            int i =0;
+            do {
+                items[i++] = cursor.getString(0);
+            } while (cursor.moveToNext());
+        }
+        return items;
+    }
+
 }

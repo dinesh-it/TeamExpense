@@ -29,6 +29,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -63,10 +64,11 @@ public class ExpenseStatus extends Activity {
     public String Month[] = {"Jan", "Feb", "Mar", "April", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"};
     private EditText desc, amt;
     public EditText date_field, date_field_from, date_field_to;
-    public AutoCompleteTextView spent_for, name, team_name;
-    private TextView status, self_status, loan_status, item_status;
+    public AutoCompleteTextView spent_for, name;
+    public Spinner group_name, pmt_mode;
+    private TextView status, self_status, loan_status, item_status, mode_status;
     private DatePicker date_picker;
-    private TableLayout team_status_table, self_status_table, loan_status_table, item_status_table;
+    private TableLayout team_status_table, self_status_table, loan_status_table, item_status_table, mode_details_table;
     private LinearLayout status_layout;
     private float share_amt;
     private JSONObject team_expense;
@@ -74,6 +76,7 @@ public class ExpenseStatus extends Activity {
     private JSONObject nameVice = new JSONObject();
     private JSONObject itemVice = new JSONObject();
     private JSONObject selfVice = new JSONObject();
+    private JSONObject modeVice = new JSONObject();
     private JSONObject loan_amt;
     private boolean sync_wifi_only = false;
     private boolean back_already_pressed = false;
@@ -117,8 +120,10 @@ public class ExpenseStatus extends Activity {
         date_field_from.setSingleLine(true);
         date_field_to = (EditText) findViewById(R.id.et_date_to);
         date_field_to.setSingleLine(true);
-        team_name = (AutoCompleteTextView) findViewById(R.id.team_name);
-        team_name.setSingleLine(true);
+
+        group_name = (Spinner) findViewById(R.id.group_name);
+        pmt_mode = (Spinner) findViewById(R.id.pmt_mode);
+
         name = (AutoCompleteTextView) findViewById(R.id.autoCompleteTextView1);
         name.setSingleLine(true);
         spent_for = (AutoCompleteTextView) findViewById(R.id.autoCompleteTextView2);
@@ -135,6 +140,7 @@ public class ExpenseStatus extends Activity {
         self_status = (TextView) findViewById(R.id.textView3);
         loan_status = (TextView) findViewById(R.id.textView4);
         item_status = (TextView) findViewById(R.id.textView5);
+        mode_status = (TextView) findViewById(R.id.textView6);
         saveBtn = (Button) findViewById(R.id.button1);
         viewBtn = (Button) findViewById(R.id.button2);
         clear_btn = (Button) findViewById(R.id.button3);
@@ -146,6 +152,7 @@ public class ExpenseStatus extends Activity {
         self_status_table = (TableLayout) findViewById(R.id.self_status_table);
         loan_status_table = (TableLayout) findViewById(R.id.loan_status_table);
         item_status_table = (TableLayout) findViewById(R.id.item_status_table);
+        mode_details_table = (TableLayout) findViewById(R.id.mode_details_table);
         status_layout = (LinearLayout) findViewById(R.id.status_layout);
         self_status.setText("");
         loan_status.setText("");
@@ -159,7 +166,7 @@ public class ExpenseStatus extends Activity {
         date_picker.init(year, month, day, null);
         date_picker.removeAllViews();
         db = new DatabaseHandler(this);
-        setAutoCompletes();
+        Expense.setAutoCompletes(name,spent_for,group_name,db,this);
         showStatus();
         name.requestFocus();
         this.addListenerOnButton();
@@ -167,7 +174,7 @@ public class ExpenseStatus extends Activity {
         modifyUserPreferences();
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         if (!def_team_name.equals("")) {
-            team_name.setText(def_team_name);
+            //group_name.setText(def_team_name);
         }
         if (self_only) {
             self_btn.setText("X");
@@ -178,7 +185,7 @@ public class ExpenseStatus extends Activity {
             } else {
                 notify("Set your name in settings to pre fill your name.");
             }
-            team_name.setText("SELF");
+            //group_name.setText("SELF");
         }
 
         mRecyclerView = (RecyclerView) findViewById(R.id.item_wise_list);
@@ -253,15 +260,6 @@ public class ExpenseStatus extends Activity {
                 }
             }
         });
-    }
-
-    public void setAutoCompletes() {
-        String[] name_list = db.getAllNames(null).clone();
-        ArrayAdapter<String> names_adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, name_list);
-        name.setAdapter(names_adapter);
-        String[] items_list = db.getAllItems().clone();
-        ArrayAdapter<String> items_adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items_list);
-        spent_for.setAdapter(items_adapter);
     }
 
     public void addListenerOnButton() {
@@ -514,7 +512,9 @@ public class ExpenseStatus extends Activity {
                 epoch_date,
                 spent_for.getText().toString(),
                 desc.getText().toString(),
-                Float.parseFloat("" + amt.getText()));
+                Float.parseFloat("" + amt.getText()),
+                String.valueOf(group_name.getSelectedItem()),
+                String.valueOf(pmt_mode.getSelectedItem()));
         db.addExpense(exp);
         Toast.makeText(ExpenseStatus.this, "Saved Successfuly", Toast.LENGTH_LONG).show();
         clear_form();
@@ -529,7 +529,7 @@ public class ExpenseStatus extends Activity {
         desc.setText("");
         me_btn.setText("Me");
         self_btn.setText("Self");
-        setAutoCompletes();
+        Expense.setAutoCompletes(name,spent_for,group_name,db,this);
     }
 
     @Override
@@ -821,7 +821,7 @@ public class ExpenseStatus extends Activity {
                             epoch_date,
                             "User Added",
                             user_type.getSelectedItem().toString(),
-                            (float) 0);
+                            (float) 0,"PRIVATE","NULL");
                     db.addExpense(exp);
                     Toast.makeText(ExpenseStatus.this, "Added Successfuly", Toast.LENGTH_LONG).show();
                     dialog.cancel();
@@ -858,14 +858,14 @@ public class ExpenseStatus extends Activity {
                                     Expense.toEpoch("28/" + month + "/" + year),
                                     loan_names[0],
                                     "Moved to " + t_day + "/" + t_month + "/" + t_year,
-                                    Float.parseFloat(value.toString()));
+                                    Float.parseFloat(value.toString()),"LOAN","NULL");
                             db.addExpense(exp);
 
                             Expense exp1 = new Expense(loan_names[0],
                                     Expense.toEpoch(t_day + "/" + t_month + "/" + t_year),
                                     loan_names[1],
                                     "From month " + Month[month - 1] + ", " + year,
-                                    Float.parseFloat(value.toString()));
+                                    Float.parseFloat(value.toString()),"LOAN","NULL");
                             db.addExpense(exp1);
 
                         } catch (JSONException e) {
@@ -990,14 +990,20 @@ public class ExpenseStatus extends Activity {
                                 List<Expense> exp1 = db.getFilteredExpenses(date_field.getText().toString(), names[1], setle_on_val, true);
                                 Expense texp1 = exp1.get(0);
                                 if (texp1 != null) {
-                                    texp1.amt = texp1.amt - Float.parseFloat(value.toString());
-                                    if (texp1.amt > 0) {
-                                        Expense texp0 = new Expense();
-                                        texp0.name = names[0];
-                                        texp0.spent_for = setle_on_val;
-                                        texp0.comment = "Setled by " + names[1];
-                                        texp0.date = Expense.toEpoch(date_field.getText().toString());
-                                        texp0.amt = Float.parseFloat(value.toString());
+                                    texp1.setAmt(texp1.getAmt() - Float.parseFloat(value.toString()));
+                                    if (texp1.getAmt() > 0) {
+                                        String name, spent_for, comment, t_group, t_mode;
+                                        long t_date;
+                                        float t_amt;
+                                        name = names[0];
+                                        spent_for = setle_on_val;
+                                        comment = "Setled by " + names[1];
+                                        t_date = Expense.toEpoch(date_field.getText().toString());
+                                        t_amt = Float.parseFloat(value.toString());
+                                        t_group = "LOAN";
+                                        t_mode = "CASH";
+
+                                        Expense texp0 = new Expense(name,t_date,spent_for,comment,t_amt,t_group,t_mode);
 
                                         db.updateExpense(texp1);
                                         db.addExpense(texp0);
@@ -1035,31 +1041,39 @@ public class ExpenseStatus extends Activity {
                                     List<Expense> exp1 = db.getFilteredExpenses(date_field.getText().toString(), names[1], max_exp_spent, true);
                                     Expense texp1 = exp1.get(0);
                                     if (texp1 != null) {
-                                        float amt_to_tally = texp1.amt - actual_balance_amt;
+                                        float amt_to_tally = texp1.getAmt() - actual_balance_amt;
                                         if (amt_to_tally < 0) {
-                                            amt_to_tally = texp1.amt;
-                                            texp1.amt = Float.parseFloat("0");
+                                            amt_to_tally = texp1.getAmt();
+                                            texp1.setAmt(Float.parseFloat("0"));
                                             actual_balance_amt = actual_balance_amt - amt_to_tally;
                                             tallied = false;
                                         } else {
-                                            texp1.amt = amt_to_tally;
+                                            texp1.setAmt(amt_to_tally);
                                             amt_to_tally = actual_balance_amt;
                                             actual_balance_amt = 0;
                                             tallied = true;
                                         }
-                                        Expense texp0 = new Expense();
-                                        texp0.name = names[0];
-                                        texp0.spent_for = max_exp_spent;
-                                        texp0.comment = "Setled by " + names[1] + " (" + iterations + ")";
-                                        texp0.date = Expense.toEpoch(date_field.getText().toString());
-                                        texp0.amt = amt_to_tally;
+                                        String name, spent_for, comment, t_group, t_mode;
+                                        long t_date;
+                                        float t_amt;
 
-                                        Expense texp2 = new Expense();
-                                        texp2.name = names[1];
-                                        texp2.spent_for = names[0];
-                                        texp2.comment = "Setled for " + max_exp_spent + " (" + iterations + ")";
-                                        texp2.date = Expense.toEpoch(date_field.getText().toString());
-                                        texp2.amt = amt_to_tally;
+                                        name = names[0];
+                                        spent_for = max_exp_spent;
+                                        comment = "Setled by " + names[1] + " (" + iterations + ")";
+                                        t_date = Expense.toEpoch(date_field.getText().toString());
+                                        t_amt = amt_to_tally;
+                                        t_group = "LOAN";
+                                        t_mode = "INTERNAL";
+
+                                        Expense texp0 = new Expense(name,t_date,spent_for,comment,t_amt,t_group,t_mode);
+
+                                        name = names[1];
+                                        spent_for = names[0];
+                                        comment = "Setled for " + max_exp_spent + " (" + iterations + ")";
+                                        t_date = Expense.toEpoch(date_field.getText().toString());
+                                        t_amt = amt_to_tally;
+
+                                        Expense texp2 = new Expense(name,t_date,spent_for,comment,t_amt,t_group,t_mode);
 
                                         db.updateExpense(texp1);
                                         db.addExpense(texp0);
@@ -1188,10 +1202,12 @@ public class ExpenseStatus extends Activity {
         self_status_table.removeAllViews();
         loan_status_table.removeAllViews();
         item_status_table.removeAllViews();
+        mode_details_table.removeAllViews();
         status.setText("");
         self_status.setText("");
         loan_status.setText("");
         item_status.setText("");
+        mode_status.setText("");
 
         status.setGravity(Gravity.CENTER);
         viewBtn.setEnabled(true);
@@ -1203,6 +1219,7 @@ public class ExpenseStatus extends Activity {
         itemVice = new JSONObject();
         selfVice = new JSONObject();
         loanVice = new JSONObject();
+        modeVice = new JSONObject();
         String names[] = db.getAllNames(null);
         non_team_users = db.getAllIndividuals("01/" + date[1] + "/" + date[2]);
         for (Expense exp : expenses) {
@@ -1225,7 +1242,7 @@ public class ExpenseStatus extends Activity {
                 //Team Expense
                 else {
                     // Check if this transaction is belongs to team
-                    if (indexOf(non_team_users, exp.name) == -1) {
+                    if (indexOf(non_team_users, exp.getName()) == -1) {
                         //Name level
                         if (nameVice.has(exp.getName()))
                             n_amt = n_amt + Float.parseFloat(nameVice.getString(exp.getName()));
@@ -1234,10 +1251,23 @@ public class ExpenseStatus extends Activity {
                             i_amt = i_amt + Float.parseFloat(itemVice.getString(exp.getSpentFor()));
                         }
                         nameVice.put(exp.getName(), n_amt);
-                        team_expense.put(exp.name, n_amt);
+                        team_expense.put(exp.getName(), n_amt);
                         itemVice.put(exp.getSpentFor(), i_amt);
                     }
                 }
+
+                // PaymentMode wise grouping
+                String t1_name, t1_mode;
+                t1_mode = exp.getPaymentMode();
+                t1_name = exp.getName();
+                String pmt_mode_str = t1_name + " using " + t1_mode;
+                if(modeVice.has(pmt_mode_str)){
+                    modeVice.put(pmt_mode_str, modeVice.getDouble(pmt_mode_str) + exp.getAmt());
+                }
+                else{
+                    modeVice.put(pmt_mode_str, exp.getAmt());
+                }
+
                 for (int i = 0; i < names.length; i++) {
                     for (int j = 0; j < names.length && i != j; j++) {
                         String t1 = names[i] + " gave to " + names[j];
@@ -1593,6 +1623,62 @@ public class ExpenseStatus extends Activity {
 
                     setRowClickListener(row, "item");
                     item_status_table.addView(row);
+                    //status.append("For " + key + " you spent " + value + " rs\n");
+                } catch (JSONException e) {
+                    Toast.makeText(ExpenseStatus.this, "!!!Something Went Wrong!!!", Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+
+        // Payment mode vice table
+        if (modeVice.length() > 0) {
+            mode_status.setText("Expense in each payment mode");
+            Iterator<?> mode_iter = modeVice.keys();
+            TableRow tableHead;
+            TextView textView;
+            //header
+            tableHead = new TableRow(getApplicationContext());
+            tableHead.setBackgroundColor(Color.LTGRAY);
+
+            textView = new TextView(getApplicationContext());
+            textView.setTextColor(Color.BLACK);
+            textView.setText("Name   using   Mode");
+            textView.setPadding(10, 10, 10, 10);
+            tableHead.addView(textView);
+
+            textView = new TextView(getApplicationContext());
+            textView.setTextColor(Color.BLACK);
+            textView.setText("Spent Amount");
+            textView.setPadding(10, 10, 10, 10);
+            tableHead.addView(textView);
+
+            mode_details_table.addView(tableHead);
+
+            while (mode_iter.hasNext()) {
+                String key = (String) mode_iter.next();
+                try {
+                    Object value = modeVice.get(key);
+                    TableRow row;
+                    TextView col;
+
+                    row = new TableRow(getApplicationContext());
+
+                    col = new TextView(getApplicationContext());
+                    col.setTextColor(Color.BLUE);
+                    col.setText(key);
+                    //col.setWidth(160);
+                    col.setMaxLines(4);
+                    col.setSingleLine(false);
+                    col.setPadding(10, 10, 10, 10);
+                    row.addView(col);
+
+                    col = new TextView(getApplicationContext());
+                    col.setTextColor(Color.DKGRAY);
+                    col.setText(Expense.toCurrencyWithSymbol(Float.parseFloat(value.toString())));
+                    col.setPadding(10, 10, 10, 10);
+                    row.addView(col);
+
+                    mode_details_table.addView(row);
                     //status.append("For " + key + " you spent " + value + " rs\n");
                 } catch (JSONException e) {
                     Toast.makeText(ExpenseStatus.this, "!!!Something Went Wrong!!!", Toast.LENGTH_LONG).show();

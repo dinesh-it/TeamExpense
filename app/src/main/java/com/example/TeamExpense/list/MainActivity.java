@@ -118,6 +118,8 @@ public class MainActivity extends Activity {
 
                 day_exp.put("amount", Expense.toCurrencyWithSymbol(amt));
 
+                day_exp.put("pmt_mode", exp.getPaymentMode());
+
                 exp_data_set.add(i, day_exp);
 
                 i++;

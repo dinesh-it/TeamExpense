@@ -111,7 +111,7 @@ public class LoanDetailsActivity extends Activity {
 
                 JSONObject day_exp = new JSONObject();
 
-                day_exp.put("Id",exp.id);
+                day_exp.put("Id",exp.getId());
                 day_exp.put("date_day", Expense.getWeekDay(date_str));
                 day_exp.put("date_month", Expense.getStringMonth(date_str) + ", " + date[2]);
                 day_exp.put("date", date[0]);
@@ -133,6 +133,7 @@ public class LoanDetailsActivity extends Activity {
                 day_exp.put("comments", cmt);
 
                 day_exp.put("amount", Expense.toCurrencyWithSymbol(amt));
+                day_exp.put("pmt_mode", exp.getPaymentMode());
 
                 day_exp.put("amt_balance", Expense.toCurrency(bal_amt));
 

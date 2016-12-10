@@ -6,51 +6,13 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
-  
-    <EditText
-        android:id="@+id/editText1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:contentDescription="This date will be used for all Status and View Transaction also."
-        android:ems="10"
-        android:hint="Date"
-        android:inputType="date" />
 
-    <AutoCompleteTextView
-        android:id="@+id/autoCompleteTextView1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textCapSentences"
-        android:ems="10"
-        android:hint="Paid By. eg: Dinesh" />
+        <include layout="@layout/modify_expense"/>
 
-    <AutoCompleteTextView
-        android:id="@+id/autoCompleteTextView2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textCapSentences"
-        android:ems="10"
-        android:hint="Spent For eg: Food" />
-
-    <EditText
-        android:id="@+id/editText4"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textCapSentences"
-        android:ems="10"
-        android:hint="Comments" />
-
-    <EditText
-        android:id="@+id/editText5"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="Amount. eg: 35.00"
-        android:inputType="numberDecimal" />
-    
     <TableRow
         android:id="@+id/tableRow5"
         android:layout_width="match_parent"
+        android:gravity="center"
         android:layout_height="wrap_content" >
         
     <Button

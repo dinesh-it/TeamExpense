@@ -68,6 +68,22 @@ public class LoanReCyclerAdapter extends RecyclerView.Adapter<LoanReCyclerAdapte
                 holder.amount.setTextColor(Color.RED);
             }
 
+            String pmt_mode = exp.get("pmt_mode").toString();
+            holder.pmt_mode.setText(pmt_mode);
+
+            if(pmt_mode.equalsIgnoreCase("CASH")) {
+                holder.pmt_mode.setTextColor(Color.parseColor("#dd4535"));
+            }
+            else if(pmt_mode.equalsIgnoreCase("CC")){
+                holder.pmt_mode.setTextColor(Color.parseColor("#37a753"));
+            }
+            else if(pmt_mode.equalsIgnoreCase("DC")){
+                holder.pmt_mode.setTextColor(Color.parseColor("#f5bd17"));
+            }
+            else if(pmt_mode.equalsIgnoreCase("ONLINE")){
+                holder.pmt_mode.setTextColor(Color.parseColor("#4483ea"));
+            }
+
             holder.amt_bal.setText("Tot: " + exp.get("amt_balance").toString());
             holder.joiner.setText("to");
         }
@@ -85,7 +101,7 @@ public class LoanReCyclerAdapter extends RecyclerView.Adapter<LoanReCyclerAdapte
 
     public class CustomViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView date, date_day, date_month, loan_from, loan_to, comments, amount, amt_bal, joiner;
+        public TextView date, date_day, date_month, loan_from, loan_to, comments, amount, amt_bal, joiner, pmt_mode;
 
         public CustomViewHolder(View view) {
             super(view);
@@ -101,6 +117,7 @@ public class LoanReCyclerAdapter extends RecyclerView.Adapter<LoanReCyclerAdapte
             amount = (TextView) view.findViewById(R.id.loan_amount);
             amt_bal = (TextView) view.findViewById(R.id.loan_amount_balance);
             joiner = (TextView) view.findViewById(R.id.exp_joiner);
+            pmt_mode = (TextView) view.findViewById(R.id.pmt_mode);
         }
 
         public void bind(final JSONObject item, final OnItemClickListener listener) {
